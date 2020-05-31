@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <fieldset>
+        <div class="form-group">
+            {{ form.hidden_tag()}}
+            name {{form.name(class="form-control")}}
+
+            category {{form.category_id(class="form-control")}}
+        </div>
+        <select class="custom-select" required>
+      <option value="">Open this select menu</option>
+            {% for category in category_list %}
+      <option value="{{loop.index}}">{{category}}</option>
+            {% endfor %}
+    </select>
+        <div class="forms errors">
+            {{form.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+</form>
+
+{% endblock content %}

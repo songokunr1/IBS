@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <fieldset>
+        <div class="form-group">
+            category{{form.category(class="form-control")}}
+
+            {{ form.hidden_tag()}}
+        </div>
+        <div class="forms errors">
+            {{form.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+</form>
+
+<form method="POST" action="">
+    <fieldset>
+        <div class="form-group">
+            {{form_delete.category_type(class="form-control")}}
+
+            {{ form_delete.hidden_tag()}}
+        </div>
+        <div class="forms errors">
+            {{form_delete.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form_delete.submit_delete(class="btn btn-outline-info") }}
+    </div>
+</form>
+
+{% endblock content %}

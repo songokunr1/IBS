@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="app3">
+    [[[message]]]
+</div>
+
+<div id="app4">
+    [[[band]]]
+    <h1>Todos</h1>
+    <ul>
+        <li v-for="todos of todos" :key="band.id">
+            [[[band.name]]]
+        </li>
+    </ul>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Author</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(name, index) in band" :key="index">
+            <td>[[[name.id]]] [[[message]]]</td>
+            <td>[[[name.name]]]</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-warning btn-sm">Update</button>
+                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>{{today}}</div>
+<div id="app">
+    [[[message]]]
+</div>
+{% for single_category in all_category%}
+<div><h2>{{single_category.category}}</h2></div>
+
+{% for single_data_record in Date.find_date_by_category_id_and_date(single_category.id, '2020-05-28')%}
+<div>-----------------------------------------------------------------------------------------------------------</div>
+<div></div>
+<input type="checkbox" id="" value="{{single_data_record.activity.name}}" v-model="checkedNames">
+<label>{{single_data_record.activity.name}}</label>
+
+{% endfor %}
+
+{% endfor %}
+<span>Checked names: {{ checkedNames }}</span>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"> </script>
+<script>
+    var app = new Vue({
+        el: '#app3',
+        data: {
+            message: 'Hello Vue!',
+      },
+        delimiters: ['[[[', ']]]']
+    })
+</script>
+<script>
+    var app = new Vue({
+        el: '#app4',
+        delimiters: ['[[[', ']]]'],
+        data: {
+            message: 'Hello Vue!',
+            band: {},
+            todos: []
+      },
+      methods: {
+         fetchData: function () {
+            this.$http.get('http://127.0.0.1:8020/todos').then(response => {
+                  this.band = response.body;
+            }, response => {
+                console.log("an error occured");
+            });
+         }
+      },
+      mounted: function () {
+        this.fetchData();
+        }
+    })
+</script>
+
+<script>
+    var app = new Vue({
+        el: '#app2',
+        data: {
+            message: 'Hello Vue!'
+      },
+        delimiters: ['[[[', ']]]']
+    })
+
+{% endblock content %}

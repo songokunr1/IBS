@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <fieldset>
+        <div class="form-group">
+            {{form_choose_date.date_report(value=today)}}
+        </div>
+        <div class="forms errors">
+            {{form_choose_date.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{form_choose_date.submit_date(class="form-control")}}
+    </div>
+</form>
+{% endblock content %}

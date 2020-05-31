@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <fieldset>
+        <div class="form-group">
+            cateeegory{{form.category(class="form-control")}}
+            {{ form.hidden_tag()}}
+        </div>
+        <div class="forms errors">
+            {{form.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+</form>
+
+{% endblock content %}

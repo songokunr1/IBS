@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    <fieldset>
+        <div class="custom-control-lg">
+            box{{form.box(class_="checkbox")}}
+            {{ form.hidden_tag()}}
+        </div>
+        <div class="forms errors">
+            {{form.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+</form>
+
+
+<div class="container">
+    <div class="row ">
+        <div class="col-6 col-md-4"></div>
+        <div class="col-6 col-md-4"><h3>
+            My habits from category:</h3>
+            <h1 class="text-center">{{category}}</h1>
+        </div>
+
+        <div class="col-6 col-md-4"></div>
+    </div>
+
+    <div class="row ">
+        <div class="col-6 col-md-4"></div>
+        <div class="col-6 col-md-4">
+
+            <table class="table table-sm">
+                <thead class="table-secondary">
+                <tr>
+                    <th scope="col">
+                        <div class="text-right">NR</div>
+                    </th>
+                    <th scope="col">Habit</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for habit in habits %}
+                <tr>
+                    <th scope="row">
+                        <div class="text-right">{{loop.index}}</div>
+                    </th>
+                    <td>{{habit}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6 col-md-1">
+            <form method="POST" action="">
+                <fieldset>
+                    <div class="custom-control-lg">
+                        box{{form.box(class_="checkbox")}}
+                        {{ form.hidden_tag()}}
+                    </div>
+                    <div class="forms errors">
+                        {{form.errors}}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div>
+        {% for habit in habits %}
+        <div class="row">
+            <div class="col-6 col-md-3"></div>
+            <div class="col-6 col-md-1">                 {{loop.index}}. </div>
+            <div class="col-6 col-md-8">{{habit}}</div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+
+{% endblock content %}
