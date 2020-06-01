@@ -1,8 +1,9 @@
 from datetime import date
 
-from flask import render_template, url_for, flash, redirect, jsonify,request
+from flask import render_template, url_for, flash, redirect, jsonify, request
 from flask_restful import Api
-
+import requests
+import json
 from app import app
 from app import db
 from app.forms import DateActivityReport, ChooseDate
@@ -396,10 +397,22 @@ def report3(choosen_date):
             Date.save_to_db(new_record)
             flash('Your update has been created!', 'success')
     for single_category in all_category:
-        print(single_category.category)
+        #print(single_category.category)
         date_object = Date.find_date_by_category_id_and_date(single_category.id, choosen_date)
-        for single in date_object:
-            print(single.activity.name)
+        # for single in date_object:
+        #     print(single.activity.name)
+    if request.method == 'POST':
+        post_data = request.form.getlist('mycheckbox')
+        post_date = request.form.get('choosen_date')
+        print(post_date, post_data)
+        for id in post_data:
+            today = Date.find_date_by_date_id_and_date(_id=int(id), date=post_date)
+            today.done = True
+            db.session.commit()
+            print(id, today.id)
+            flash('Your update has been created!', 'success')
+        return redirect(url_for('report3', form_done=form_done, date_object=date_object, all_category=all_category,
+                                choosen_date=choosen_date))
     if form_done.validate_on_submit():
         today = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date=choosen_date)
         today.done = True
@@ -506,6 +519,10 @@ def jsonactivities():
         'act': activity_init
     })
 
-@app.route("/records_get", methods=['GET', 'POST'])
+@app.route("/records_get", methods=['POST'])
 def jsongetactivities():
-    print(request.get_json())
+    if request.method == 'POST':
+        post_data = request.get_json()
+        print(post_data)
+        return '''<h1> json is {} </h1>'''.format(post_data)
+    return '''<h1> not post </h1>'''
