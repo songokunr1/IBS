@@ -17,23 +17,26 @@
 
 {% for single_data_record in Date.find_date_by_category_id_and_date(single_category.id, choosen_date)%}
 <div>-----------------------------------------------------------------------------------------------------------</div>
-<div>{{single_data_record.activity.name}}</div>
 <form method="POST" action="">
     <fieldset>
+        <div>{{single_data_record.activity.name}}</div>
+
         {%if single_data_record.done%}
         nawyk jest DONE
         {% else %}
         <div class="form-group">
-            {{form_done.box(class="form-control input-sm")}}
-            {{form_done.date_id(value=single_data_record.id)}}
+            <input type="checkbox" value={{single_data_record.id}} name="mycheckbox">
+            <input type="hidden" value={{single_data_record.date}} name="choosen_date">
         </div>
+
+        {% endif %}
+
+        {% endfor %}
+
+        <div>-----------------------------------------------------------------------------------------------------------</div>
+        {% endfor %}
+        <input type="submit">
     </fieldset>
-    <div class="form-group">
-        {{form_done.submit_done_or_not(class="form-control")}}
-    </div>
-    {% endif %}
 </form>
-{% endfor %}
-<div>-----------------------------------------------------------------------------------------------------------</div>
-{% endfor %}
+<div>.</div>
 {% endblock content %}
