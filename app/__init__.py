@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CsrfProtect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+# from flask_cors import CORS
 
 from werkzeug.wsgi import DispatcherMiddleware
 from werkzeug.serving import run_simple
@@ -18,7 +19,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['WTF_CSRF_ENABLED'] = False
 
-CORS(app, resources={r'/*': {'origins': '*'}})
+# CORS(app, resources={r'/*': {'origins': '*'}})
 db = SQLAlchemy(app)
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 session = Session(engine)
