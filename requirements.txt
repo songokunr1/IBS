@@ -5,3 +5,4 @@ Flask-SQLAlchemy
 datetime
 flask_wtf
 wtforms
+werkzeug
