@@ -4,6 +4,5 @@ Flask-JWT
 Flask-SQLAlchemy
 uwsgi
 datetime
-models
 flask_wtf
 wtforms
