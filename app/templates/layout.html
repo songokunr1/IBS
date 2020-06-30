@@ -15,6 +15,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css"/>
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     {% if title %}
@@ -25,7 +29,25 @@
 </head>
 <body>
 
-<div class="col-md-8">
+<div class="container">
+    <div class="row">
+
+        <div class="col-8">
+
+        </div>
+        <div class="col-4">
+            <a role="button" class="btn btn-info" href="{{url_for('report')}}">report</a>
+            <a role="button" class="btn btn-info" href="{{url_for('update')}}">update</a>
+            <a role="button" class="btn btn-info" href="{{url_for('add')}}">add</a>
+            <a role="button" class="btn btn-info" href="{{url_for('create_meal')}}">create_meal</a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-12">
     {% block content %}{% endblock %}
 </div>
 <!-- Optional JavaScript -->
@@ -40,6 +62,10 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js"></script>
+<script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+<script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
 
 
 {% block scripts %}
