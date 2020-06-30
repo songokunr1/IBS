@@ -8,12 +8,20 @@
 <label for="mike">Mike</label>
 <br>
 <span>Checked names: {{ checkedNames }}</span>
+<style>
+.custom-control-label::before,
+.custom-control-label::after {
+top: .8rem;
+width: 2.25rem;
+height: 2.25rem;
+}
 
+</style>
 
 <div>{{choosen_date}}</div>
 <div></div>
 {% for single_category in all_category%}
-<div><h2>{{single_category.category}}</h2></div>
+<div><h2 class="text-danger">{{single_category.category}}</h2></div>
 
 {% for single_data_record in Date.find_date_by_category_id_and_date(single_category.id, choosen_date)%}
 <div>-----------------------------------------------------------------------------------------------------------</div>
@@ -24,9 +32,16 @@
         {%if single_data_record.done%}
         nawyk jest DONE
         {% else %}
+
         <div class="form-group">
-            <input type="checkbox" value={{single_data_record.id}} name="mycheckbox">
-            <input type="hidden" value={{single_data_record.date}} name="choosen_date">
+            <div class="custom-control custom-checkbox">
+
+                <input type="checkbox" class="custom-control-input" value={{single_data_record.id}}
+                       name="mycheckbox" id="{{single_data_record.id}}">
+                <label class="custom-control-label" for="{{single_data_record.id}}"></label>
+
+                <input type="hidden" value={{single_data_record.date}} name="choosen_date">
+            </div>
         </div>
 
         {% endif %}
@@ -35,8 +50,9 @@
 
         <div>-----------------------------------------------------------------------------------------------------------</div>
         {% endfor %}
-        <input type="submit">
+        <input type="submit" class="btn btn-primary my-1">
     </fieldset>
 </form>
+
 <div>.</div>
 {% endblock content %}
