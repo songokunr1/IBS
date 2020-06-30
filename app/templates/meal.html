@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="col-8">
+    <form method="POST" action="">
+        <fieldset>
+            <table class="table table-hover alert alert-primary" role="alert">
+                <thead>
+                <tr>
+                    <th scope="col">name of meal</th>
+                    <th scope="col">meat</th>
+                    <th scope="col">vegetables</th>
+                    <th scope="col">carbs</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-3">{{form_create_meal.meal_name (class="form-control form-control-lg", size=6)}}</div>
+                 <div class="col-3">{{form_create_meal.meat_ingredients (class="form-control form-control-lg", size=6)}}</div>
+                 <div class="col-3">{{form_create_meal.carbs_ingredients (class="form-control form-control-lg", size=6)}}</div>
+                 <div class="col-3">{{form_create_meal.warzywa_ingredients (class="form-control form-control-lg", size=6)}}</div>
+            </div>
+
+            <div class="alert alert-primary col-2"> All meals:</div>
+            <div class="col-5 ">{{form_create_meal.ingredients (class="form-control form-control-lg", size=6,
+            id="exampleFormControlSelect2")}}
+
+            <div class="forms errors">
+                {{form_create_meal.errors}}
+            </div>
+        </fieldset>
+        <div class="form-group row">
+            <div class="col-3"></div>
+            <div class="col-6 text-center form-group ">
+            {{form_create_meal.submit_meal(class="col-8 btn btn-outline-info")}}
+                </div>
+        </div>
+    </form>
+    <div>
+        {%if added%}
+        {{meal_name}} zostal dodany do menu! :)
+        {%elif in_menu %}
+        {{meal_name}} już jest w menu!! :)
+        {% endif %}
+    </div>
+</div>
+</div>
+{% endblock content %}
