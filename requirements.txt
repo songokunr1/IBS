@@ -6,3 +6,5 @@ datetime
 flask_wtf
 wtforms
 werkzeug
+uwsgi
+psycopg2
