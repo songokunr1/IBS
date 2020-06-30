@@ -35,6 +35,9 @@
     </table>
 </div>
 
+
+
+
 <div>{{today}}</div>
 <div id="app">
     [[[message]]]
@@ -52,6 +55,8 @@
 
 {% endfor %}
 <span>Checked names: {{ checkedNames }}</span>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"> </script>
@@ -96,5 +101,6 @@
       },
         delimiters: ['[[[', ']]]']
     })
+</script>
 
 {% endblock content %}
