@@ -35,26 +35,24 @@ class ChooseTypeAndDate(FlaskForm):
     submit_type_and_date = SubmitField()
 
 class CreateMeal(FlaskForm):
-    try:
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         full_activity_list = Activity.list_of_activity_objects()
-        activity_choices = [(single.id, single.name) for single in full_activity_list if
+        self.ingredients.choices = [(single.id, single.name) for single in full_activity_list if
                         single.category_id not in [Category.find_by_category(category).id for category in
                                                    Category.list_of_not_meal_category()]]
-    except:
-        print('Create Meal form cannot be craeted')
-
-    # Meal.json_meal()
-
-    meat_choices = choices_by_category('wysoko białkowe')
-    carbs_choices = choices_by_category('wysoko weglowodanowe', 'bezglutenowe', 'gluten')
-    warzywa_choices = choices_by_category('warzywa', 'owoce')
-
+# Meal.json_meal()
+        self.meat_ingredients.choices = choices_by_category('wysoko białkowe')
+        self.carbs_ingredients.choices = choices_by_category('wysoko weglowodanowe', 'bezglutenowe', 'gluten')
+        self.warzywa_ingredients.choices = choices_by_category('warzywa', 'owoce')
     meal_name = StringField('meal_name')
-    meat_ingredients = SelectMultipleField(u'meat_ingredients', choices=meat_choices)
-    carbs_ingredients = SelectMultipleField(u'wegle', choices=carbs_choices)
-    warzywa_ingredients = SelectMultipleField(u'warzywa', choices=warzywa_choices)
-    ingredients = SelectMultipleField(u'ingredients', choices=activity_choices)
+    meat_ingredients = SelectMultipleField(u'meat_ingredients')
+    carbs_ingredients = SelectMultipleField(u'wegle')
+    warzywa_ingredients = SelectMultipleField(u'warzywa')
+    ingredients = SelectMultipleField(u'ingredients')
     submit_meal = SubmitField()
+
 
 class UpdateCategory(FlaskForm):
     all_cat = Category.json_all()
