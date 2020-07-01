@@ -6,8 +6,8 @@ from flask_restful import Api
 
 from app import app
 from app import db
-from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
-    UpdateActivity, AddActivity, AddCategory
+# from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory,
+#     UpdateActivity, AddActivity, AddCategory
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal
 from app.resources import CategoryResource
