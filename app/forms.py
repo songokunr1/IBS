@@ -55,22 +55,27 @@ class CreateMeal(FlaskForm):
 
 
 class UpdateCategory(FlaskForm):
-    all_cat = Category.json_all()
-    choice = [(single['id'], single['name']) for single in all_cat]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.all_cat = Category.json_all()
+        self.category_category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
 
-    category_category_id = SelectField('Type', coerce=int, choices=choice)
+    category_category_id = SelectField('Type', coerce=int)
     category_name = TextAreaField('Name')
     submit_updated_category = SubmitField()
 
 class UpdateActivity(FlaskForm):
-    all_cat = Category.json_all()
-    choice = [(single['id'], single['name']) for single in all_cat]
-    all_act = Activity.json_all()
-    choice_act = [(single['id'], single['name']) for single in all_act]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.all_cat = Category.json_all()
+        self.activity_category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
+        self.all_act = Activity.json_all()
+        self.activity_activity_id.choices = [(single['id'], single['name']) for single in self.all_act]
 
 
-    activity_category_id = SelectField('Type', coerce=int, choices=choice)
-    activity_activity_id = SelectField('Type', coerce=int, choices=choice_act)
+    activity_category_id = SelectField('Type', coerce=int)
+    activity_activity_id = SelectField('Type', coerce=int)
     box = BooleanField('Do you want to change category?', default=False)
     activity_name = TextAreaField('new activity name')
 
@@ -79,10 +84,12 @@ class UpdateActivity(FlaskForm):
 
 
 class AddActivity(FlaskForm):
-    all_cat = Category.json_all()
-    choice = [(single['id'], single['name']) for single in all_cat]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.all_cat = Category.json_all()
+        self.category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
 
-    category_id = SelectField('Type', coerce=int, choices=choice)
+    category_id = SelectField('Type', coerce=int)
     activity_name = TextAreaField('new_activity')
     submit_new_activity = SubmitField()
 
