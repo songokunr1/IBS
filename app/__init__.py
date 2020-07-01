@@ -27,6 +27,3 @@ session = Session(engine)
 csrf = CsrfProtect()
 from app import routes
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
