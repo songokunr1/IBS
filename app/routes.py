@@ -6,8 +6,8 @@ from flask_restful import Api
 
 from app import app
 from app import db
-# from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory,
-#     UpdateActivity, AddActivity, AddCategory
+from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
+    UpdateActivity, AddActivity, AddCategory
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal
 from app.resources import CategoryResource
@@ -871,23 +871,18 @@ def report_new_date2(chosen_date):
         return render_template('report_full_json.html', form=form_filter, activity_list=find_filtered_records,
                                type=type,
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                               done_activite_ids=done_activite_ids, meal_dict=meal_dict,today=today)
+                               done_activite_ids=done_activite_ids, meal_dict=meal_dict, today=today)
     if request.method == 'POST':
         checkboxes_breakfast = request.form.getlist('checkbox_breakfast')
         checkboxes_lunch = request.form.getlist('checkbox_lunch')
         checkboxes_last_meal = request.form.getlist('checkbox_last_meal')
 
-        checkboxes = [{'activity_ids':request.form.getlist('checkbox_breakfast'), 'type': 'breakfast'},
+        checkboxes = [{'activity_ids': request.form.getlist('checkbox_breakfast'), 'type': 'breakfast'},
                       {'activity_ids': request.form.getlist('checkbox_lunch'), 'type': 'lunch'},
                       {'activity_ids': request.form.getlist('checkbox_last_meal'), 'type': 'last_meal'},
                       {'activity_ids': request.form.getlist('checkbox_morning'), 'type': 'morning'},
                       {'activity_ids': request.form.getlist('checkbox_night'), 'type': 'night'},
                       {'activity_ids': request.form.getlist('checkbox_meal'), 'type': 'meal'}]
-
-
-
-
-
 
         for type_checkbox in checkboxes:
             if type_checkbox['type'] == 'breakfast':
@@ -908,7 +903,8 @@ def report_new_date2(chosen_date):
 
             for activity_id in type_checkbox['activity_ids']:
                 try:
-                    print(DateNew.find_activitys_by_date_id_and_type(chosen_date, activity_id, **type_true_or_false).date)
+                    print(
+                        DateNew.find_activitys_by_date_id_and_type(chosen_date, activity_id, **type_true_or_false).date)
                     _k = DateNew.find_activitys_by_date_id_and_type(chosen_date, activity_id, **type_true_or_false).date
                     continue
                 except:
