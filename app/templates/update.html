@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="col-5 alert alert-info text-center" role="alert"><h2>Change category naming</h2></div>
+    <div class="row">
+        <div class="col-3">
+            <form method="POST" action="">
+                <fieldset>
+                    {{form_category.category_name (class="form-control form-control-lg", size=6)}}
+
+        </div>
+        <div class="col-4">
+            {{form_category.category_category_id (class="form-control form-control-lg", size=6,)}}
+
+        </div>
+        <div class="forms errors">
+            {{form_category.errors}}
+        </div>
+        </fieldset>
+    </div>
+
+    <div class="form-group">
+        {{form_category.submit_updated_category(class="btn btn-outline-info bg", value="SUBMIT CATEGORY")}}
+    </div>
+    </form>
+    <div class="row ">.
+    </div>
+    <div class="col-5 alert alert-info text-center" role="alert"><h2>Change activity naming</h2></div>
+
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-5"><h5>.</h5></div>
+    </div>
+    <form method="POST" action="">
+        <fieldset>
+            <div class="row">
+                <div class="col-3">
+                    {{form_activity.activity_name (class="form-control form-control-lg", size=6)}}
+                </div>
+                <div class="col-4">
+                    {{form_activity.activity_activity_id (class="form-control form-control-lg", size=6,)}}
+                </div>
+            </div>
+
+            {{form_activity.activity_category_id}}
+            {{form_activity.box}} do you want to change category?
+            <div class="forms errors">
+                {{form_activity.errors}}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{form_activity.submit_updated_activity(class="btn btn-outline-info", value="SUBMIT ACTIVITY")}}
+        </div>
+    </form>
+</div>
+</div>
+<div>
+    {%if added%}
+    {{meal_name}} zostal dodany do menu! :)
+    {%elif in_menu %}
+    {{meal_name}} już jest w menu!! :)
+    {% endif %}
+</div>
+</div>
+
+{% endblock content %}
