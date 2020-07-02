@@ -1,0 +1,262 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+.custom-control-label::before,
+.custom-control-label::after {
+top: .8rem;
+width: 2.0rem;
+height: 2.0rem;
+}
+
+
+
+
+
+
+
+
+
+
+</style>
+<div class="container">
+    <div class="row">
+
+        <div class="col-8">
+            <a role="button" class="btn btn-info"
+               href="{{url_for('report_new_date', type='breakfast', chosen_date=chosen_date)}}">breakfast</a>
+            <a role="button" class="btn btn-info"
+               href="{{url_for('report_new_date', type='lunch', chosen_date=chosen_date)}}">lunch</a>
+            <a role="button" class="btn btn-info"
+               href="{{url_for('report_new_date', type='last_meal', chosen_date=chosen_date)}}">last_meal</a>
+            <a role="button" class="btn btn-info"
+               href="{{url_for('report_new_date', type='morning', chosen_date=chosen_date)}}">morning</a>
+            <a role="button" class="btn btn-info"
+               href="{{url_for('report_new_date', type='night', chosen_date=chosen_date)}}">night</a>
+
+        </div>
+    </div>
+</div>
+<div>.</div>
+<div class="container">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-4 alert alert-danger font-weight-bold text-center" role="alert"><h1>Fill in: {{type}}</h1></div>
+
+    </div>
+    <div class="row">
+        <div class="col-6">
+
+            <div id="app1">
+
+                <form method="POST" action="">
+                    <fieldset>
+                        <div class="form-group">
+                            {{ form.hidden_tag()}}
+                            <div class=""><h2>Find in the form</h2>></div>
+
+                            {{form.filter(class="form-control")}}
+                        </div>
+                        <div class="forms errors">
+                            {{form.errors}}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit_filter(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+
+                <form method="POST" action="">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">id category</th>
+                            <th scope="col">Author</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for activity_record in activity_list %}
+                        {%if activity_record['category_id'] % 2 == 0%}
+                        <tr class="bg-success text-white">
+                            {% else %}
+                        <tr class="bg-secondary text-white">
+                            {% endif %}
+
+                            <td>{{loop.index}} {{activity_record['category_name']}}</td>
+                            <td>{{activity_record['name']}}</td>
+                            <td>
+                                <fieldset>
+                                    {%if activity_record['id'] in done_activite_ids%}
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   value={{activity_record['id']}}
+                                                   name="mycheckbox" id="{{activity_record['id']}}" checked>
+                                            <label class="btn custom-control-label" for="{{activity_record['id']}}"></label>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   value={{activity_record['id']}}
+                                                   name="mycheckbox" id="{{activity_record['id']}}">
+                                            <label class="btn custom-control-label" for="{{activity_record['id']}}"></label>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </fieldset>
+                            </td>
+
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                    <input type="submit" class="btn btn-primary my-1">
+                </form>
+            </div>
+        </div>
+        <div class="col-6">
+            <form method="POST" action="">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Meal</th>
+                        <th scope="col">ingredients</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for activity_record in meal_dict %}
+
+                    {%if activity_record['id'] % 2 == 0%}
+                    <tr class="bg-success text-white">
+                        {% else %}
+                    <tr class="bg-secondary text-white">
+                        {% endif %}
+                        <td>{{loop.index}}</td>
+                        <td>{{activity_record['name']}}</td>
+
+                        <td>{% for ingredient in activity_record['list_of_ingredients_names'] %}
+                            {{ingredient}},
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <fieldset>
+                                <!--            {%if activity_record.id in done_activite_ids%}-->
+                                <!--            nawyk jest DONE-->
+                                <!--            {% else %}-->
+                                <!--                                                {% endif %}-->
+
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input"
+                                               value={{activity_record['id']}}
+                                               name="mycheckbox2" id="99{{activity_record['id']}}">
+                                        <label class="custom-control-label" for="99{{activity_record['id']}}" ></label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+                <input type="submit" class="btn btn-primary my-1">
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"></script>
+
+<script>
+
+
+Vue.use(BootstrapVue)
+var app = new Vue({
+  el: '#app4',
+  delimiters: ['[[[', ']]]'],
+  data: {
+    message: 'Hello Vue!',
+    band: {},
+    todos: []
+    checked1: false,
+    checked2: false
+  },
+  methods: {
+    fetchData: function () {
+      this.$http.get('http://127.0.0.1:8020/api/records').then(response => {
+        this.band = response.body;
+      }, response => {
+        console.log("an error occured");
+      });
+    }
+  },
+  sendAddress: function () {
+    this.$http.post('http://127.0.0.1:8020/api/records_get').then(response => {
+      (this.info = response);
+
+    })},
+    mounted: function () {
+      this.fetchData();
+      axios
+      .post('http://127.0.0.1:8020/records_get')
+      .then(response =>
+        (this.info = response));
+
+      })
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<script>
+      var app = new Vue({
+        el: '#app1',
+        delimiters: ['[[[', ']]]'],
+        data: {
+          message: 'Hello Vue!',
+          band: {},
+          todos: []
+        },
+        methods: {
+          fetchData: function () {
+            this.$http.get('http://127.0.0.1:8020/todos').then(response => {
+              this.band = response.body;
+            }, response => {
+              console.log("an error occured");
+            });
+          }
+        },
+        mounted: function () {
+          this.fetchData();
+        }
+      })
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock content %}
