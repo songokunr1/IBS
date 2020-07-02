@@ -8,3 +8,4 @@ wtforms
 werkzeug
 uwsgi
 psycopg2
+gunicorn
