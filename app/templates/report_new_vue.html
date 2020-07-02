@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div id="app1">
+  <form method="POST" action="">
+    <fieldset>
+      <div class="form-group">
+        {{ form.hidden_tag()}}
+        name {{form.filter(class="form-control")}}
+      </div>
+      <div class="forms errors">
+        {{form.errors}}
+      </div>
+    </fieldset>
+    <div class="form-group">
+      {{ form.submit_filter(class="btn btn-outline-info") }}
+    </div>
+  </form>
+
+  <form method="POST" action="">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity_record in activity_list %}
+        <tr>
+          <td>{{loop.index}}</td>
+          <td>{{activity_record.name}}</td>
+          <td>
+            <fieldset>
+              {%if activity_record.done%}
+              nawyk jest DONE
+              {% else %}
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" value={{activity_record.id}}
+                  name="mycheckbox" id="{{activity_record.id}}">
+                  <label class="custom-control-label" for="{{activity_record.id}}"></label>
+                </div>
+              </div>
+              {% endif %}
+            </fieldset>
+          </td>
+
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+    <input type="submit" class="btn btn-primary my-1">
+
+  </form>
+</div>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"></script>
+
+<script>
+var app = new Vue({
+  el: '#app4',
+  delimiters: ['[[[', ']]]'],
+  data: {
+    message: 'Hello Vue!',
+    band: {},
+    todos: []
+  },
+  methods: {
+    fetchData: function () {
+      this.$http.get('http://127.0.0.1:8020/api/records').then(response => {
+        this.band = response.body;
+      }, response => {
+        console.log("an error occured");
+      });
+    }
+  },
+  sendAddress: function () {
+    this.$http.post('http://127.0.0.1:8020/api/records_get').then(response => {
+      (this.info = response);
+
+    })},
+    mounted: function () {
+      this.fetchData();
+      axios
+      .post('http://127.0.0.1:8020/records_get')
+      .then(response =>
+        (this.info = response));
+
+      })
+
+      </script>
+
+      <script>
+      var app = new Vue({
+        el: '#app1',
+        delimiters: ['[[[', ']]]'],
+        data: {
+          message: 'Hello Vue!',
+          band: {},
+          todos: []
+        },
+        methods: {
+          fetchData: function () {
+            this.$http.get('http://127.0.0.1:8020/todos').then(response => {
+              this.band = response.body;
+            }, response => {
+              console.log("an error occured");
+            });
+          }
+        },
+        mounted: function () {
+          this.fetchData();
+        }
+      })
+      </script>
+      {% endblock content %}
