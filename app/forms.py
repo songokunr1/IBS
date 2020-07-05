@@ -39,9 +39,7 @@ class CreateMeal(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         full_activity_list = Activity.list_of_activity_objects()
-        self.ingredients.choices = [(single.id, single.name) for single in full_activity_list if
-                        single.category_id not in [Category.find_by_category(category).id for category in
-                                                   Category.list_of_not_meal_category()]]
+        self.ingredients.choices = [(str(single['id']), single['name']) for single in Activity.find_activities_by_x_category('białka mleka','cukier','laktoza')]
 # Meal.json_meal()
         self.meat_ingredients.choices = choices_by_category('wysoko białkowe')
         self.carbs_ingredients.choices = choices_by_category('wysoko weglowodanowe', 'bezglutenowe', 'gluten')
@@ -97,6 +95,21 @@ class AddCategory(FlaskForm):
     category_name = TextAreaField('new_category')
     submit_new_category = SubmitField()
 
+class DeleteActivity(FlaskForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.all_cat = Activity.json_all()
+        self.activity_id.choices = [(single['id'], single['name']) for single in self.all_cat]
+    activity_id = SelectField('Type', coerce=int)
+    submit_delete_activity = SubmitField()
+
+class DeleteCategory(FlaskForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.all_cat = Category.json_all()
+        self.category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
+    category_id = SelectField('Type', coerce=int)
+    submit_delete_category = SubmitField()
 
 # class ChooseMultiple(FlaskForm):
 #     filter = FilterField
