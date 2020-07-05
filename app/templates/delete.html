@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-2"></div>
+    </div>
+    <form method="POST" action="">
+        <fieldset>
+            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete Category</h1>
+            </div>
+            <div class="col-2 alert alert-info text-center">category name:</div>
+
+            {{form_category.category_id (class="col-2 form-control form-control-lg", size=6 )}}
+            <div class="forms errors">
+                {{form_category.errors}}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{form_category.submit_delete_category(class=" col-2 btn btn-outline-info", value="button1")}}
+        </div>
+    </form>
+    <div>. </div>
+    <div>. </div>
+
+    <div>. </div>
+
+    <form method="POST" action="">
+        <fieldset>
+            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete Activity</h1>
+            </div>
+            <div class="col-2 alert alert-info text-center">which category?  </div>
+            {{form_activity.activity_id (class="col-2 form-control form-control-lg", size=6 )}}
+            {{form_activity.box}}
+            <div class="forms errors">
+                {{form_activity.errors}}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{form_activity.submit_delete_activity(class="col-2 btn btn-outline-info", value="button2")}}
+        </div>
+    </form>
+    <div>
+        {%if added%}
+        {{meal_name}} zostal dodany do menu! :)
+        {%elif in_menu %}
+        {{meal_name}} już jest w menu!! :)
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
