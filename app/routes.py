@@ -7,7 +7,7 @@ from flask_restful import Api
 from app import app
 from app import db
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
-    UpdateActivity, AddActivity, AddCategory
+    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal
 from app.resources import CategoryResource
@@ -741,7 +741,7 @@ def report_new_date(type, chosen_date):
 @app.route("/create_meal", methods=['POST', 'GET'])
 def create_meal():
     form_create_meal = CreateMeal()
-
+    print(Activity.find_activities_by_x_category('cukier'))
     if form_create_meal.validate_on_submit():
         ing = {
             'carbs_ingredients': form_create_meal.carbs_ingredients.data,
@@ -749,11 +749,11 @@ def create_meal():
             'ingredients': form_create_meal.ingredients.data,
             'warzywa_ingredients': form_create_meal.warzywa_ingredients.data,
         }
-
+        print(ing, 'whole data with ingredients')
         meal_name = form_create_meal.meal_name.data
         ingredients = Meal.ingredients_for_meal(**ing)
         try:
-            Meal.query.filter_by(name=meal_name).first().name
+            assert(Meal.query.filter_by(name=meal_name).first().name, f' good, {meal_name} meal not exist in database')
             print(f'the {meal_name} is in the menu')
             return render_template('meal.html', form_create_meal=form_create_meal, ingredients=ingredients,
                                    meal_name=meal_name, in_menu=True)
@@ -821,28 +821,65 @@ def add():
     print(form_activity.validate_on_submit())
     if form_category.validate_on_submit() and form_category.submit_new_category.data:
         a_category = Category(category=form_category.category_name.data)
-        db.session.commit()
+        Category.save_to_db(a_category)
         # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
         print('we have change it')
-        return render_template('update.html',
+        return render_template('add.html',
                                form_activity=form_activity, form_category=form_category)
     if form_activity.validate_on_submit() and form_activity.submit_new_activity.data:
         print('im here')
         try:
+            print('1')
             print(Activity.find_by_name(form_activity.activity_name.data).name)
+            print('2')
             return render_template('add.html',
                                    form_activity=form_activity, form_category=form_category, added_activity=True)
         except:
+            print('except')
+            print(form_activity.activity_name.data, "form_activity.activity_name.data")
             a_activity = Activity(name=form_activity.activity_name.data, category_id=form_activity.category_id.data)
-            a_activity.name = form_activity.activity_name.data
             # if form_activity.box.data:
             #     a_activity.category_id = form_activity.activity_category_id.data
-            db.session.commit()
+            Activity.save_to_db(a_activity)
             print(f'well done, we added {form_activity.activity_name.data}')
 
         return render_template('add.html',
                                form_activity=form_activity, form_category=form_category, added_activity=True)
     return render_template('add.html',
+                           form_activity=form_activity, form_category=form_category)
+
+@app.route("/delete", methods=['POST', 'GET'])
+def delete():
+    form_category = DeleteCategory()
+    form_activity = DeleteActivity()
+    all_cat = Category.json_all()
+
+    print(form_category.validate_on_submit())
+    print(form_activity.submit_delete_activity.data)
+    print(form_category.submit_delete_category.data)
+    print(form_activity.validate_on_submit())
+    if form_category.validate_on_submit() and form_category.submit_delete_category.data:
+        a_category = Category.find_by_id(_id=form_category.category_id.data)
+        Category.delete_from_db(a_category)
+        # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
+        print(f'Successful deleted category')
+        return render_template('delete.html',
+                               form_activity=form_activity, form_category=form_category)
+    if form_activity.validate_on_submit() and form_activity.submit_delete_activity.data:
+        print('im here in activity form')
+        try:
+            a_activity = Activity.find_by_id(form_activity.activity_id.data)
+            print(form_activity.activity_id.data)
+            print(a_activity)
+        except:
+            print('except, we could delete activity')
+            #     a_activity.category_id = form_activity.activity_category_id.data
+            print(f'well done, we added {form_activity.activity_id.data}')
+        Activity.delete_from_db(a_activity)
+        print(f'Successful deleted category')
+        return render_template('delete.html',
+                               form_activity=form_activity, form_category=form_category, added_activity=True)
+    return render_template('delete.html',
                            form_activity=form_activity, form_category=form_category)
 
 
