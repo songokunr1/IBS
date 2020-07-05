@@ -9,9 +9,9 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(20), unique=True, nullable=False)
-    activity = db.relationship('Activity', lazy='dynamic')
-    dates = db.relationship('Date', lazy='dynamic')
-    datesnew = db.relationship("DateNew", lazy='dynamic')
+    activity = db.relationship('Activity', lazy='dynamic', cascade='all,delete')
+    dates = db.relationship('Date', lazy='dynamic', cascade='all,delete')
+    datesnew = db.relationship("DateNew", lazy='dynamic', cascade='all,delete')
 
     def __init__(self, category):
         self.category = category
@@ -97,8 +97,8 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    date_id = db.relationship("Date", back_populates="activity")
-    datenew_id = db.relationship("DateNew", lazy='dynamic')
+    date_id = db.relationship("Date", back_populates="activity", cascade='all,delete')
+    datenew_id = db.relationship("DateNew", lazy='dynamic', cascade='all,delete')
 
     # def __init__(self, name=None, date_start=None, date_end=None, priority=None, category_id=None):
     #     self.data = (name, date_start, date_end, priority, category_id)
@@ -128,6 +128,16 @@ class Activity(db.Model):
                  'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.all()
                 if Category.find_name_by_id(single.category_id) in ['objawy', 'stres', 'uzywki', 'leki']]
 
+    @classmethod
+    def find_activities_by_x_category(cls, *args):
+        cls.query.all()
+        return [{'name': single.name,
+                 'id': single.id,
+                 'category_id': single.category_id,
+                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.all()
+                if Category.find_name_by_id(single.category_id) in [*args]]
+
+#TODO: you are giving X arguments > and we getting dictionary with all activies within that category_args
     @classmethod
     def json_meals(cls):
         cls.query.all()
@@ -170,8 +180,12 @@ class Activity(db.Model):
         db.session.commit()
 
     def delete_from_db(self):
+        print('I will try to delete')
         db.session.delete(self)
+        print('I deleted!')
         db.session.commit()
+        print('I commited session!')
+
 
 
 class Date(db.Model):
@@ -184,7 +198,7 @@ class Date(db.Model):
                             nullable=False)
     activity = db.relationship('Activity',
                                primaryjoin='Activity.id == Date.activity_id',
-                               backref=backref('Activity.name', lazy='joined'))
+                               backref=backref('Activity.name', lazy='joined', cascade='all,delete'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id')
                             , nullable=False)
     category = db.relationship('Category',
@@ -249,11 +263,11 @@ class DateNew(db.Model):
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'),
                             nullable=False)
     activity = db.relationship('Activity',
-                               primaryjoin='Activity.id == DateNew.activity_id', lazy='joined')
+                               primaryjoin='Activity.id == DateNew.activity_id', lazy='joined', cascade='all,delete')
     category_id = db.Column(db.Integer, db.ForeignKey('category.id')
                             , nullable=False)
     category = db.relationship('Category',
-                               primaryjoin='Category.id == DateNew.category_id', lazy='joined')
+                               primaryjoin='Category.id == DateNew.category_id', lazy='joined', cascade='all,delete')
 
     # activity jest obiektem modelu activity!
     def __repr__(self):
@@ -327,7 +341,7 @@ class DateNew(db.Model):
 
     @classmethod
     def list_of_types(cls):
-        return ['breakfast', 'list_of_types', 'last_meal', 'morning', 'night']
+        return ['breakfast', 'lunch', 'last_meal', 'morning', 'night']
 
     @staticmethod
     def json_of_types():
