@@ -96,6 +96,7 @@ class Activity(db.Model):
     __tablename__ = 'activity'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
+    # type = db.Column(db.String(50), unique=True, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     date_id = db.relationship("Date", back_populates="activity", cascade='all,delete')
     datenew_id = db.relationship("DateNew", lazy='dynamic', cascade='all,delete')
@@ -274,6 +275,12 @@ class DateNew(db.Model):
         return f"DateNew('{self.date}', '{self.activity}')"
 
     @classmethod
+    def set_true_for_type_of_raport(cls, type):
+        type_true_or_false = {single: (True if single == type else False) for single in
+                              ['breakfast', 'lunch', 'last_meal', 'morning', 'night']}
+        return type_true_or_false
+
+    @classmethod
     def json_date(cls):
         return [{'id': date_object.id,
                  'date': date_object.date,
@@ -287,6 +294,34 @@ class DateNew(db.Model):
                  'category_id': date_object.category_id
                  }
                 for date_object in cls.query.all()]
+
+    @staticmethod
+    def json_from_object(date_object):
+        return {'id': date_object.id,
+                 'date': date_object.date,
+                 'done': date_object.done,
+                 'breakfast': date_object.breakfast,
+                 'lunch': date_object.lunch,
+                 'last_meal': date_object.last_meal,
+                 'morning': date_object.morning,
+                 'night': date_object.night,
+                 'activity_id': date_object.activity_id,
+                 'category_id': date_object.category_id
+                 }
+
+    @staticmethod
+    def give_me_done_type_by_object(single_object):
+        if single_object.breakfast:
+            return 'breakfast'
+        if single_object.lunch:
+            return 'lunch'
+        if single_object.last_meal:
+            return 'last_meal'
+        if single_object.morning:
+            return 'morning'
+        if single_object.night:
+            return 'night'
+
 
     @classmethod
     def json_full_info_by_date(cls, today):
@@ -321,21 +356,9 @@ class DateNew(db.Model):
          }
 
         for date_object in cls.find_activitys_by_date(today):
-            if date_object.breakfast:
-                list_of_done['breakfast_id'].append(date_object.activity_id)
-                list_of_done['breakfast_name'].append(Activity.find_name_by_id(date_object.activity_id))
-            if date_object.lunch:
-                list_of_done['lunch_id'].append(date_object.activity_id)
-                list_of_done['lunch_name'].append(Activity.find_name_by_id(date_object.activity_id))
-            if date_object.last_meal:
-                list_of_done['last_meal_id'].append(date_object.activity_id)
-                list_of_done['last_meal_name'].append(Activity.find_name_by_id(date_object.activity_id))
-            if date_object.morning:
-                list_of_done['morning_id'].append(date_object.activity_id)
-                list_of_done['morning_name'].append(Activity.find_name_by_id(date_object.activity_id))
-            if date_object.night:
-                list_of_done['night_id'].append(date_object.activity_id)
-                list_of_done['night_name'].append(Activity.find_name_by_id(date_object.activity_id))
+            type = DateNew.give_me_done_type_by_object(date_object)
+            list_of_done[type + '_id'].append(date_object.activity_id)
+            list_of_done[type + '_name'].append(Activity.find_name_by_id(date_object.activity_id))
         return list_of_done
 
 
@@ -394,6 +417,30 @@ class DateNew(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    @classmethod
+    def add_to_db_by_list_and_type(cls, list_of_activities, type, chosen_date):
+        for activity_id in list_of_activities:
+            type_true_or_false = cls.set_true_for_type_of_raport(type)
+            category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
+            today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
+                            activity_id=activity_id)
+            DateNew.save_to_db(today)
+            # done_activite_ids = [single.activity_id for single in
+            #                      DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
+
+
+    # @classmethod
+    # def save_in_db_by_list_of_activities(cls,list_activity, date=chosen_date):
+    #     for activity_id in list_activity:
+    #         category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
+    #         today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
+    #                         activity_id=activity_id)
+    #         DateNew.save_to_db(today)
+    #         flash('Your update has been created!', 'success')
+    #         done_activite_ids = [single.activity_id for single in
+    #                              DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
+
+
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
@@ -406,6 +453,45 @@ class Meal(db.Model):
     name = db.Column(db.String(100), nullable=False)
     ingredients = db.Column(db.String(100), nullable=False)
     day_time = db.Column(db.String(20), default='lunch', nullable=False)
+
+    @classmethod
+    def get_list_of_activities(cls, meal_ids):
+        activity_ids = []
+        for single_id in meal_ids:
+            print(single_id)
+            list_of_activity = Meal.find_list_of_ingredients_by_id(single_id)
+            print([activity_ids.append(single_act_id) for single_act_id in list_of_activity if
+             single_act_id not in activity_ids])
+        return activity_ids
+
+    @classmethod
+    def get_list_of_activities_by_json(cls, meal_json):
+        meal_ids_by_json = {'breakfast': [], 'lunch': [], 'last_meal': []}
+        for each_time in ['breakfast', 'lunch', 'last_meal']:
+            for single_id in meal_json[each_time]:
+                print(single_id)
+                list_of_activity = Meal.find_list_of_ingredients_by_id(single_id)
+                print([meal_ids_by_json[each_time].append(single_act_id) for single_act_id in list_of_activity if
+                 single_act_id not in meal_ids_by_json[each_time]])
+        return meal_ids_by_json
+
+    @classmethod
+    def get_activities_by_time_of_meal_and_meal_id(cls, list_time_of_meal, list_meal_checkboxes):
+        meal_ids_by_json = {'breakfast': [], 'lunch': [], 'last_meal': []}
+        memory = 0
+        for time_of_meal in list_time_of_meal:
+            if time_of_meal == 'None':
+                print('single, robie continue:', time_of_meal)
+                continue
+            print(list_time_of_meal, 'listtime')
+            if time_of_meal == 'breakfast':
+                meal_ids_by_json[time_of_meal].append(list_meal_checkboxes[memory])
+            if time_of_meal == 'lunch':
+                meal_ids_by_json[time_of_meal].append(list_meal_checkboxes[memory])
+            if time_of_meal == 'last_meal':
+                meal_ids_by_json[time_of_meal].append(list_meal_checkboxes[memory])
+            memory += 1
+        return Meal.get_list_of_activities_by_json(meal_ids_by_json)
 
     @classmethod
     def list_of_meals(cls):
