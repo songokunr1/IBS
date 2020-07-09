@@ -20,6 +20,8 @@ height: 2.0rem;
 
 
 
+
+
 </style>
 <div class="container">
     <div class="row">
@@ -267,6 +269,7 @@ height: 2.0rem;
                         <th></th>
                     </tr>
                     </thead>
+
                     <tbody>
                     {% for activity_record in meal_dict %}
 
@@ -293,11 +296,14 @@ height: 2.0rem;
                                     <div class="form-group">
                                         <label for="meal">Choose time of meal:</label>
                                         <select class="custom-select" name="meal_time" id="meal">
+                                            <option value="None">None</option>
                                             <option value="breakfast">breakfast</option>
                                             <option value="lunch">lunch</option>
                                             <option value="last_meal">last_meal</option>
                                         </select>
                                     </div>
+
+
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input"
                                                value={{activity_record['id']}}
@@ -375,6 +381,8 @@ var app = new Vue({
 
 
 
+
+
 </script>
 
 <script>
@@ -399,6 +407,8 @@ var app = new Vue({
           this.fetchData();
         }
       })
+
+
 
 
 
