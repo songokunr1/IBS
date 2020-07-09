@@ -709,14 +709,9 @@ def report_new_date(type, chosen_date):
             if not activity_ids:
                 print('robie finnal!')
                 meal_ids = request.form.getlist('mycheckbox2')
-                for single_id in meal_ids:
-                    activity_ids = []
-                    list_of_activity = Meal.find_list_of_ingredients_by_id(single_id)
-                    [activity_ids.append(single_act_id) for single_act_id in list_of_activity if
-                     single_act_id not in activity_ids]
-            for activity_id in activity_ids:
-                print(activity_id, 'post date czy okej?')
-                print(done_activite_ids)
+                list_activity_from_meal = Meal.get_list_of_activities(meal_ids)
+                print(list_activity_from_meal, 'blablabl')
+            for activity_id in list_activity_from_meal:
                 category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
                 today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
                                 activity_id=activity_id)
@@ -724,6 +719,7 @@ def report_new_date(type, chosen_date):
                 flash('Your update has been created!', 'success')
                 done_activite_ids = [single.activity_id for single in
                                      DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
+
             return render_template('report_new_json.html', form=form_filter, activity_list=activity_list, type=type,
                                    chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                                    done_activite_ids=done_activite_ids, meal_list=meal_list, meal_dict=meal_dict,
@@ -774,17 +770,6 @@ def update():
     form_activity = UpdateActivity()
     all_cat = Category.json_all()
     choice = [(single['id'], single['name']) for single in all_cat]
-    print('form_category', form_category.submit_updated_category.data)
-    print('form_category', form_category.category_category_id.data)
-    print('form_category', form_category.category_name.data)
-    print('form_activity', form_activity.activity_activity_id.data)
-    print('form_activity', form_activity.activity_name.data)
-    print('form_activity', form_activity.box.data)
-    print('form_activity', form_activity.activity_category_id.data)
-    print('form_activity', form_activity.submit_updated_activity.data)
-
-    print(form_category.validate_on_submit())
-    print(form_activity.validate_on_submit())
     if form_category.validate_on_submit():
         a_category = Category.query.filter_by(id=form_category.category_category_id.data).first()
         print(a_category.category)
@@ -854,10 +839,6 @@ def delete():
     form_activity = DeleteActivity()
     all_cat = Category.json_all()
 
-    print(form_category.validate_on_submit())
-    print(form_activity.submit_delete_activity.data)
-    print(form_category.submit_delete_category.data)
-    print(form_activity.validate_on_submit())
     if form_category.validate_on_submit() and form_category.submit_delete_category.data:
         a_category = Category.find_by_id(_id=form_category.category_id.data)
         Category.delete_from_db(a_category)
@@ -885,6 +866,7 @@ def delete():
 
 @app.route("/report2/<chosen_date>", methods=['POST', 'GET'])
 def report_new_date2(chosen_date):
+
     form_filter = FilterField()
     chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
 
@@ -896,6 +878,7 @@ def report_new_date2(chosen_date):
     type_true_or_false = {single: (True if single == 'breakfast' else False) for single in
                           ['breakfast', 'lunch', 'last_meal', 'morning', 'night']}
     today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
+    print(today)
     # print(type_true_or_false)
     # print(DateNew.find_activitys_by_date_id_and_type(chosen_date, _id=20, **type_true_or_false))
 
@@ -953,21 +936,26 @@ def report_new_date2(chosen_date):
         print(type_checkbox['activity_ids'])
 
         if type_checkbox['type'] == 'meal':
+            flash('you have to fill full form')
             list_time_of_meal = request.form.getlist('meal_time')
+            list_meal_checkboxes = request.form.getlist('checkbox_meal')
+            try:
+                json_list_activity_from_meal = Meal.get_activities_by_time_of_meal_and_meal_id(list_time_of_meal, list_meal_checkboxes)
+                for single_type in DateNew.list_of_types():
+                    try:
+                        DateNew.add_to_db_by_list_and_type(list_of_activities=json_list_activity_from_meal[single_type],
+                                                           type=single_type, chosen_date=chosen_date)
+                    except KeyError as e:
+                        print('1')
+                        flash('you have to fill full form')
+                        continue
+            except UnboundLocalError as ee:
+                print('2')
+                flash('you have to fill full form')
+            except IndexError as e:
+                print('3')
+                flash('you have to fill full form')
 
-            #
-            #     activity_ids = []
-            #     list_of_activity = Meal.find_list_of_ingredients_by_id(single_id)
-            #     [activity_ids.append(single_act_id) for single_act_id in list_of_activity if
-            #      single_act_id not in activity_ids]
-            # for activity_id in activity_ids:
-            #     print(activity_id, 'post date czy okej?')
-            #     print(done_activite_ids)
-            #     category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
-            #     today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
-            #                     activity_id=activity_id)
-            #     DateNew.save_to_db(today)
-            #     flash('Your update has been created!', 'success')
         today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
 
         return render_template('report_full_json.html', form=form_filter,
