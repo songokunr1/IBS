@@ -21,6 +21,10 @@ class ChooseDate(FlaskForm):
     date_report = DateField('Date', format='%Y-%m-%d')
     submit_date = SubmitField()
 
+class ChooseDateNewReport(FlaskForm):
+    date_report = DateField('Date', format='%Y-%m-%d')
+    submit_date_new_report = SubmitField()
+
 
 class FilterField(FlaskForm):
     filter = TextAreaField('filter', validators=[DataRequired()], default='')
