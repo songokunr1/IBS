@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create Daily Report- Ole Version</h2></div>
+    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create Daily Report</h2></div>
 
     <form method="POST" action="">
         <fieldset>
@@ -14,6 +14,7 @@
         </fieldset>
         <div class="col-4 form-group">
             {{form_choose_date.submit_date(class="form-control")}}
+<!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
         </div>
     </form>
 
@@ -23,8 +24,6 @@
             <div class="form-group">
                 {{form_choose_type_and_date.date_report(value=today)}}
                 {{form_choose_type_and_date.type_of_report(value=today)}}
-
-
             </div>
             <div class="forms errors">
                 {{form_choose_type_and_date.errors}}
@@ -34,5 +33,21 @@
             {{form_choose_type_and_date.submit_type_and_date(class="form-control")}}
         </div>
     </form>
+
+<!--    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create New Daily Report v2.0</h2></div>-->
+<!--    <form method="POST" action="">-->
+<!--        <fieldset>-->
+<!--            <div class="form-group">-->
+<!--                {{new_report_form.date_report(value=today)}}-->
+<!--            </div>-->
+<!--            <div class="forms errors">-->
+<!--                {{new_report_form.errors}}-->
+<!--            </div>-->
+<!--        </fieldset>-->
+<!--        <div class="col-4 form-group">-->
+<!--            {{new_report_form.submit_date_new_report(class="form-control")}}-->
+<!--        </div>-->
+<!--    </form>-->
+<!--</div>-->
 </div>
 {% endblock content %}
