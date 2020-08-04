@@ -7,7 +7,7 @@ from flask_restful import Api
 from app import app
 from app import db
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
-    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory
+    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal
 from app.resources import CategoryResource
@@ -502,18 +502,23 @@ def report():
     today = str(date.today())
     form_choose_date = ChooseDate()
     form_choose_type_and_date = ChooseTypeAndDate()
+    new_report_form = ChooseDateNewReport()
     print(form_choose_date.validate_on_submit)
     print(form_choose_type_and_date.submit_type_and_date)
     if form_choose_type_and_date.validate_on_submit():
         date_to_show = form_choose_type_and_date.date_report.data
         type_choice = form_choose_type_and_date.type_of_report.data
         return redirect(url_for('report_new_date', type=type_choice, chosen_date=date_to_show))
+    if new_report_form.validate_on_submit():
+        date_to_show = new_report_form.date_report.data
+        return redirect(url_for('report_new_date2', chosen_date=date_to_show))
     if form_choose_date.validate_on_submit():
         date_to_show = form_choose_date.date_report.data
         return redirect(url_for('report3', choosen_date=date_to_show))
     return render_template('report_base.html',
                            form_choose_date=form_choose_date, today=today,
-                           form_choose_type_and_date=form_choose_type_and_date)
+                           form_choose_type_and_date=form_choose_type_and_date,
+                           new_report_form=new_report_form)
 
 
 @app.route("/reportvuefinal/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
@@ -946,23 +951,23 @@ def report_new_date2(chosen_date):
                         DateNew.add_to_db_by_list_and_type(list_of_activities=json_list_activity_from_meal[single_type],
                                                            type=single_type, chosen_date=chosen_date)
                     except KeyError as e:
-                        print('1')
+                        error = ('you have to fill form correctly')
                         flash('you have to fill full form')
                         continue
-            except UnboundLocalError as ee:
-                print('2')
+            except UnboundLocalError as e:
+                error=('you have to fill form correctly')
                 flash('you have to fill full form')
             except IndexError as e:
-                print('3')
+                error = ('you have to fill form correctly')
                 flash('you have to fill full form')
 
         today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
-
+        print(Activity.json_meals())
         return render_template('report_full_json.html', form=form_filter,
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                                done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                                activity_symptoms=activity_symptoms,
-                               activity_meals=activity_meals, today=today
+                               activity_meals=activity_meals, today=today, error=error
                                )
     return render_template('report_full_json.html', form=form_filter,
                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
