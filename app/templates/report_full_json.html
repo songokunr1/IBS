@@ -22,10 +22,15 @@ height: 2.0rem;
 
 
 
+
+
+
 </style>
 <div class="container">
     <div class="row">
-
+        {%if erorr%}
+        {{erorr}}
+        {% endif %}
         <div class="col-8">
             <a role="button" class="btn btn-info"
                href="{{url_for('report_new_date', type='breakfast', chosen_date=chosen_date)}}">breakfast</a>
@@ -287,6 +292,11 @@ height: 2.0rem;
                         </td>
                         <td>
                             <fieldset>
+                                <div>
+                                    {%if erorr%}
+                                    {{erorr}}
+                                    {% endif %}
+                                </div>
                                 <!--            {%if activity_record.id in done_activite_ids%}-->
                                 <!--            nawyk jest DONE-->
                                 <!--            {% else %}-->
@@ -383,6 +393,9 @@ var app = new Vue({
 
 
 
+
+
+
 </script>
 
 <script>
@@ -407,6 +420,9 @@ var app = new Vue({
           this.fetchData();
         }
       })
+
+
+
 
 
 
