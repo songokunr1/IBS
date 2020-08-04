@@ -454,6 +454,8 @@ class Meal(db.Model):
     ingredients = db.Column(db.String(100), nullable=False)
     day_time = db.Column(db.String(20), default='lunch', nullable=False)
 
+
+
     @classmethod
     def get_list_of_activities(cls, meal_ids):
         activity_ids = []
