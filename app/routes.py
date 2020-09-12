@@ -7,7 +7,7 @@ from flask_restful import Api
 from app import app
 from app import db
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
-    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport
+    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal
 from app.resources import CategoryResource
@@ -842,6 +842,8 @@ def add():
 def delete():
     form_category = DeleteCategory()
     form_activity = DeleteActivity()
+    form_meal = DeleteMeal()
+
     all_cat = Category.json_all()
 
     if form_category.validate_on_submit() and form_category.submit_delete_category.data:
@@ -850,7 +852,7 @@ def delete():
         # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
         print(f'Successful deleted category')
         return render_template('delete.html',
-                               form_activity=form_activity, form_category=form_category)
+                               form_activity=form_activity, form_category=form_category, form_meal=form_meal)
     if form_activity.validate_on_submit() and form_activity.submit_delete_activity.data:
         print('im here in activity form')
         try:
@@ -864,9 +866,16 @@ def delete():
         Activity.delete_from_db(a_activity)
         print(f'Successful deleted category')
         return render_template('delete.html',
-                               form_activity=form_activity, form_category=form_category, added_activity=True)
+                               form_activity=form_activity, form_category=form_category,form_meal=form_meal,
+                               added_activity=True)
+    if form_meal.validate_on_submit() and form_meal.submit_delete_meal.data:
+        a_meal = Meal.find_by_id(_id=form_meal.meal_id.data)
+        Meal.delete_from_db(a_meal)
+        # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
+        print(f'Successful deleted category')
+        return redirect(url_for('delete', form_activity=form_activity, form_category=form_category, form_meal=form_meal))
     return render_template('delete.html',
-                           form_activity=form_activity, form_category=form_category)
+                           form_activity=form_activity, form_category=form_category, form_meal=form_meal)
 
 
 @app.route("/report2/<chosen_date>", methods=['POST', 'GET'])
