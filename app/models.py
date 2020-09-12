@@ -467,6 +467,10 @@ class Meal(db.Model):
         return activity_ids
 
     @classmethod
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
     def get_list_of_activities_by_json(cls, meal_json):
         meal_ids_by_json = {'breakfast': [], 'lunch': [], 'last_meal': []}
         for each_time in ['breakfast', 'lunch', 'last_meal']:
