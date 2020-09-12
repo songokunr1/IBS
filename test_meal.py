@@ -34,6 +34,5 @@ class TestCategory(unittest.TestCase):
         self.assertEqual(self.cat1.category, 'sport')
         self.assertEqual(self.cat1.category, 'sport')
 
-    def
 if __name__ == '__main__':
     unittest.main()
