@@ -39,6 +39,21 @@
             {{form_activity.submit_delete_activity(class="col-2 btn btn-outline-info", value="button2")}}
         </div>
     </form>
+    <form method="POST" action="">
+        <fieldset>
+            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete meal</h1>
+            </div>
+            <div class="col-2 alert alert-info text-center">meal name:</div>
+
+            {{form_meal.meal_id (class="col-2 form-control form-control-lg", size=6 )}}
+            <div class="forms errors">
+                {{form_meal.errors}}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{form_meal.submit_delete_meal(class=" col-2 btn btn-outline-info", value="button1")}}
+        </div>
+    </form>
     <div>
         {%if added%}
         {{meal_name}} zostal dodany do menu! :)
