@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create Daily Report</h2></div>
+    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create Daily Report New Version</h2></div>
 
     <form method="POST" action="">
         <fieldset>
@@ -18,7 +18,7 @@
         </div>
     </form>
 
-    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create New Daily Report</h2></div>
+    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create Daily Report Older Version</h2></div>
     <form method="POST" action="">
         <fieldset>
             <div class="form-group">
@@ -50,4 +50,8 @@
 <!--    </form>-->
 <!--</div>-->
 </div>
+<!--<button class="change"> Click me.</button>-->
+
+<script type=text/javascript src="{{
+  url_for('static', filename='js/test2.js') }}"></script>
 {% endblock content %}
