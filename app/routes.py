@@ -1,5 +1,7 @@
 import json
-from datetime import date
+from datetime import date, timedelta
+import datetime as dt
+
 from flask import render_template, url_for, flash, redirect, jsonify, request
 from flask_restful import Api
 
@@ -879,7 +881,18 @@ def delete():
 
 @app.route("/report2/<chosen_date>", methods=['POST', 'GET'])
 def report_new_date2(chosen_date):
-
+    print(chosen_date)
+    datetime = dt.datetime.strptime(chosen_date, "%Y-%m-%d")
+    previous = str(datetime+timedelta(days=-1))[:10]
+    date_info = {
+        'previous': str(datetime+timedelta(days=-1))[:10],
+        'next': str(datetime+timedelta(days=1))[:10],
+        'today': datetime,
+        'week_name': datetime.strftime("%A"),
+        'info': str(datetime.strftime("%A")) + ' ' + str(datetime)[:10]
+    }
+    next = str(datetime+timedelta(days=1))[:10]
+    print(str(datetime+timedelta(days=1))[:10])
     form_filter = FilterField()
     chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
 
@@ -975,11 +988,13 @@ def report_new_date2(chosen_date):
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                                done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                                activity_symptoms=activity_symptoms,
-                               activity_meals=activity_meals, today=today, error=error
+                               activity_meals=activity_meals, today=today, error=error, previous=previous, next=next,
+                               date_info=date_info
                                )
     return render_template('report_full_json.html', form=form_filter,
                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                            done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                            activity_symptoms=activity_symptoms,
-                           activity_meals=activity_meals, today=today
+                           activity_meals=activity_meals, today=today, next=next, previous=previous,
+                           date_info=date_info
                            )
