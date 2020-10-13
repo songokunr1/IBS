@@ -28,9 +28,9 @@ height: 2.0rem;
 </style>
 <div class="container">
     <div class="row">
-    <div class="col-5"></div>
+    <div class="col-4"></div>
     <div class="col-3">
-    <div class="alert alert-secondary"><h1>                                      {{date_info['info']}} </h1></div>
+    <div class="alert alert-secondary"><h1>{{date_info['info']}} </h1></div>
     </div>
     </div>
         <br>
@@ -38,31 +38,21 @@ height: 2.0rem;
         {%if erorr%}
         {{erorr}}
         {% endif %}
-        <div class="col-8">
-            <a role="button" class="btn btn-info"
-               href="{{url_for('report_new_date', type='breakfast', chosen_date=chosen_date)}}">breakfast</a>
-            <a role="button" class="btn btn-info"
-               href="{{url_for('report_new_date', type='lunch', chosen_date=chosen_date)}}">lunch</a>
-            <a role="button" class="btn btn-info"
-               href="{{url_for('report_new_date', type='last_meal', chosen_date=chosen_date)}}">last_meal</a>
-            <a role="button" class="btn btn-info"
-               href="{{url_for('report_new_date', type='morning', chosen_date=chosen_date)}}">morning</a>
-            <a role="button" class="btn btn-info"
-               href="{{url_for('report_new_date', type='night', chosen_date=chosen_date)}}">night</a>
-            <a role="button" class="btn btn-primary"
+        <div class="col-8"><h1>
+            <a role="button" class="btn btn-primary btn-lg"
                href="{{url_for('report_new_date2', chosen_date=previous)}}">&laquo; Previous day</a>
-            <a role="button" class="btn btn-success"
+            <a role="button" class="btn btn-success btn-lg"
                href="{{url_for('report_new_date2', chosen_date=next)}}">Next day &raquo;</a>
-        </div>
+        </h1></div>
     </div>
 </div>
 <div>.</div>
 <div class="container">
-    <div class="row">
-        <div class="col-1"></div>
-        <div class="col-4 alert alert-danger font-weight-bold text-center" role="alert"></div>
+<!--    <div class="row">-->
+<!--        <div class="col-1"></div>-->
+<!--        <div class="col-4 alert alert-danger font-weight-bold text-center" role="alert"></div>-->
 
-    </div>
+<!--    </div>-->
     <div class="row">
         <div class="col-6">
 
