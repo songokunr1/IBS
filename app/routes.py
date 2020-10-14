@@ -10,8 +10,9 @@ from app import db
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
-from app.models import Category, Activity, Date, DateNew, Meal
+from app.models import Category, Activity, Date, DateNew, Meal, Stats
 from app.resources import CategoryResource
+import requests
 
 # todo change model to done/not done, category name in date
 
@@ -987,3 +988,19 @@ def report_new_date2(chosen_date):
                            activity_meals=activity_meals, today=today,
                            date_info=date_info
                            )
+
+@app.route("/CV", methods=['POST', 'GET'])
+def CV_count():
+    db.create_all()
+    today = str(dt.datetime.now())[:10]
+    url = 'http://ipinfo.io/json'
+    response = requests.get(url)
+    j = json.loads(response.text)
+    new = Stats(ip=j['ip'], location=j['city'], date=today, country=j['country'])
+    Stats.save_to_db(new)
+    return redirect(url_for('report'))
+
+@app.route("/show_stats", methods=['POST', 'GET'])
+def show_stats():
+    return Stats.data_json()
+
