@@ -1009,10 +1009,13 @@ def CV_count():
 def CV_count2():
     # db.create_all()
     today = str(dt.datetime.now())[:10]
-    ip_address = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    fwd = request.environ.get('HTTP_X_FORWARDED_FOR', None)
+    if fwd is None:
+        return request.environ.get('REMOTE_ADDR')
     access_token = 'a2f936dd1cc48c'
+    ip_address = fwd.split(',')[0]
     handler = ipinfo.getHandler(access_token)
-    details_info = handler.getDetails()
+    details_info = handler.getDetails(ip_address)
     new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
     Stats.save_to_db(new)
     # return redirect(url_for('report'))
