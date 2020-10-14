@@ -1000,7 +1000,25 @@ def CV_count():
     details_info = handler.getDetails(ip_address)
     new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
     Stats.save_to_db(new)
-    return redirect(url_for('report'))
+    # return redirect(url_for('report'))
+    return jsonify({'ip': details_info.ip,
+                    'country': details_info.country,
+                    'location': details_info.city})
+
+@app.route("/CV2", methods=['POST', 'GET'])
+def CV_count2():
+    # db.create_all()
+    today = str(dt.datetime.now())[:10]
+    ip_address = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    access_token = 'a2f936dd1cc48c'
+    handler = ipinfo.getHandler(access_token)
+    details_info = handler.getDetails()
+    new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
+    Stats.save_to_db(new)
+    # return redirect(url_for('report'))
+    return jsonify({'ip': details_info.ip,
+                    'country': details_info.country,
+                    'location': details_info.city})
 
 @app.route("/show_stats", methods=['POST', 'GET'])
 def show_stats():
