@@ -622,6 +622,16 @@ class Stats(db.Model):
     date = db.Column(db.String(100), nullable=False)
     visit = db.Column(db.Integer, default=1, nullable=False)
 
+    @classmethod
+    def data_json(cls):
+        return [{'id': stats_object.id,
+                 'ip': stats_object.ip,
+                 'country': stats_object.country,
+                 'location': stats_object.location,
+                 'date': stats_object.date,
+                 'visit': stats_object.visit} for stats_object in
+                cls.query.all()]
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
