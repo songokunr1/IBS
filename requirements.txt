@@ -10,3 +10,4 @@ uwsgi
 psycopg2
 gunicorn
 requests
+ipinfo
