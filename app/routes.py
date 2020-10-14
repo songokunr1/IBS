@@ -1002,5 +1002,10 @@ def CV_count():
 
 @app.route("/show_stats", methods=['POST', 'GET'])
 def show_stats():
-    return Stats.data_json()
+    response = jsonify(Stats.data_json())
+    return response
+
+# def requests()
+#     url = 'http://ipinfo.io/json'
+#     response = requests.get(url)
 
