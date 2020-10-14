@@ -611,3 +611,21 @@ class Database:
     @staticmethod
     def column_with_id(table, column, _id):
         print(table.find_by_id(db.session.query(table._id).all()))
+
+
+class Stats(db.Model):
+    __tablename__ = 'stats'
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(10), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.String(100), nullable=False)
+    visit = db.Column(db.Integer, default=1, nullable=False)
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
