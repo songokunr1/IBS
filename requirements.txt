@@ -9,3 +9,4 @@ werkzeug
 uwsgi
 psycopg2
 gunicorn
+requests
