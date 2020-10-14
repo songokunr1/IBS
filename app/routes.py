@@ -13,6 +13,7 @@ from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAnd
 from app.models import Category, Activity, Date, DateNew, Meal, Stats
 from app.resources import CategoryResource
 import requests
+import ipinfo
 
 # todo change model to done/not done, category name in date
 
@@ -991,13 +992,17 @@ def report_new_date2(chosen_date):
 
 @app.route("/CV", methods=['POST', 'GET'])
 def CV_count():
-    db.create_all()
+    # db.create_all()
     today = str(dt.datetime.now())[:10]
-    url = 'http://ipinfo.io/json'
-    response = requests.get(url)
-    j = json.loads(response.text)
-    new = Stats(ip=j['ip'], location=j['city'], date=today, country=j['country'])
-    Stats.save_to_db(new)
+    ip_address = request.remote_addr
+    access_token = 'a2f936dd1cc48c'
+    handler = ipinfo.getHandler(access_token)
+    details_info = handler.getDetails(ip_address)
+    try:
+        new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
+        Stats.save_to_db(new)
+    except:
+        return redirect(url_for('report'))
     return redirect(url_for('report'))
 
 @app.route("/show_stats", methods=['POST', 'GET'])
