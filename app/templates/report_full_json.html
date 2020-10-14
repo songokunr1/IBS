@@ -38,12 +38,11 @@ height: 2.0rem;
         {%if erorr%}
         {{erorr}}
         {% endif %}
-
         <div class="col-8"><h1>
             <a role="button" class="btn btn-primary btn-lg"
-               href="{{url_for('report_new_date2', chosen_date=previous)}}">&laquo; Previous day</a>
+               href="{{url_for('report_new_date2', chosen_date=date_info['previous'])}}">&laquo; Previous day</a>
             <a role="button" class="btn btn-success btn-lg"
-               href="{{url_for('report_new_date2', chosen_date=next)}}">Next day &raquo;</a>
+               href="{{url_for('report_new_date2', chosen_date=date_info['next'])}}">Next day &raquo;</a>
         </h1></div>
     </div>
 </div>
