@@ -613,24 +613,54 @@ class Database:
         print(table.find_by_id(db.session.query(table._id).all()))
 
 
+# class Stats(db.Model):
+#     __tablename__ = 'stats'
+#     id = db.Column(db.Integer, primary_key=True)
+#     ip = db.Column(db.String(100), nullable=False)
+#     country = db.Column(db.String(10), nullable=False)
+#     location = db.Column(db.String(100), nullable=False)
+#     date = db.Column(db.String(100), nullable=False)
+#     visit = db.Column(db.Integer, default=1, nullable=False)
+#
+#     @classmethod
+#     def data_json(cls):
+#         return [{'id': stats_object.id,
+#                  'ip': stats_object.ip,
+#                  'country': stats_object.country,
+#                  'location': stats_object.location,
+#                  'date': stats_object.date,
+#                  'visit': stats_object.visit} for stats_object in
+#                 cls.query.all()]
+#
+#     def save_to_db(self):
+#         db.session.add(self)
+#         db.session.commit()
+#
+#     def delete_from_db(self):
+#         db.session.delete(self)
+#         db.session.commit()
+
 class Stats(db.Model):
     __tablename__ = 'stats'
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String(100), nullable=False)
-    country = db.Column(db.String(10), nullable=False)
-    location = db.Column(db.String(100), nullable=False)
     date = db.Column(db.String(100), nullable=False)
-    visit = db.Column(db.Integer, default=1, nullable=False)
+    visits = db.Column(db.Integer, nullable=False)
 
     @classmethod
     def data_json(cls):
         return [{'id': stats_object.id,
-                 'ip': stats_object.ip,
-                 'country': stats_object.country,
-                 'location': stats_object.location,
                  'date': stats_object.date,
-                 'visit': stats_object.visit} for stats_object in
+                 'visits': stats_object.visit} for stats_object in
                 cls.query.all()]
+
+    @classmethod
+    def find_object_by_date(cls, _date):
+        return cls.query.filter_by(date=_date).first()
+
+    @classmethod
+    def is_date_in_database(cls, _date):
+        a = cls.query.filter_by(date=_date).scalar() is not None
+        return a
 
     def save_to_db(self):
         db.session.add(self)
@@ -639,3 +669,7 @@ class Stats(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    @classmethod
+    def get_object_by_date(cls, _date):
+        return cls.query.filter_by(date=_date).first()
