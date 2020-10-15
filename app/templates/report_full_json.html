@@ -25,15 +25,20 @@ height: 2.0rem;
 
 
 
+
 </style>
 <div class="container">
     <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4">
-    <div class="alert alert-secondary text-center"><h1><dt>{{date_info['info']}} </dt></h1></div>
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="alert alert-secondary text-center">
+                <h1>
+                    <dt>{{date_info['info']}}</dt>
+                </h1>
+            </div>
+        </div>
     </div>
-    </div>
-        <br>
+    <br>
     <div class="row">
         {%if erorr%}
         {{erorr}}
@@ -41,21 +46,26 @@ height: 2.0rem;
         <div class="col-5"><h1>
             <a role="button" class="btn btn-primary btn-lg"
                href="{{url_for('report_new_date2', chosen_date=date_info['previous'])}}">&laquo; Previous day</a>
+
+        </h1></div>
+        <div class="col-4">
+            <form method="post" action="{{ url_for('remove_whole_day', chosen_date=chosen_date) }}">
+                <button class="btn btn-danger btn-lg" type="submit">Clear whole Day!</button>
+            </form>
+        </div>
+        <div class="col-3">
             <a role="button" class="btn btn-success btn-lg"
                href="{{url_for('report_new_date2', chosen_date=date_info['next'])}}">Next day &raquo;</a>
-        </h1></div>
-        <form method="post" action="{{ url_for('remove_whole_day', chosen_date=chosen_date) }}">
-        <button class="btn btn-danger btn-lg" type="submit">Clear whole Day!</button>
-        </form>
+        </div>
     </div>
 </div>
 <div>.</div>
 <div class="container">
-<!--    <div class="row">-->
-<!--        <div class="col-1"></div>-->
-<!--        <div class="col-4 alert alert-danger font-weight-bold text-center" role="alert"></div>-->
+    <!--    <div class="row">-->
+    <!--        <div class="col-1"></div>-->
+    <!--        <div class="col-4 alert alert-danger font-weight-bold text-center" role="alert"></div>-->
 
-<!--    </div>-->
+    <!--    </div>-->
     <div class="row">
         <div class="col-6">
 
@@ -83,10 +93,10 @@ height: 2.0rem;
                         <thead>
                         <tr>
                             <th scope="col">id category</th>
-                            <th scope="col">Author</th>
+                            <th scope="col">ingredients</th>
                             <th scope="col">breakfast</th>
                             <th scope="col">lunch</th>
-                            <th scope="col">last_meal</th>
+                            <th scope="col">last meal</th>
 
 
                         </tr>
@@ -193,7 +203,7 @@ height: 2.0rem;
                 <thead>
                 <tr>
                     <th scope="col">id category</th>
-                    <th scope="col">Author</th>
+                    <th scope="col">ingredients</th>
                     <th scope="col">morning</th>
                     <th scope="col">night</th>
 
@@ -401,6 +411,7 @@ var app = new Vue({
 
 
 
+
 </script>
 
 <script>
@@ -425,6 +436,7 @@ var app = new Vue({
           this.fetchData();
         }
       })
+
 
 
 
