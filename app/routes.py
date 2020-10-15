@@ -991,23 +991,22 @@ def report_new_date2(chosen_date):
 
 @app.route("/CV", methods=['POST', 'GET'])
 def CV_count():
-    # db.create_all()
+    db.create_all()
     today = str(dt.datetime.now())[:10]
-    ip_address = request.remote_addr
-    access_token = 'a2f936dd1cc48c'
-    handler = ipinfo.getHandler(access_token)
-    details_info = handler.getDetails(ip_address)
-    new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
-    Stats.save_to_db(new)
-    # return redirect(url_for('report'))
-    return jsonify({'ip': details_info.ip,
-                    'country': details_info.country,
-                    'location': details_info.city})
+    a = Stats.is_date_in_database(today)
+    if a:
+        object= Stats.get_object_by_date(today)
+        object.visits += 1
+        Stats.save_to_db(object)
+    else:
+        new = Stats(date=today, visits=1)
+        Stats.save_to_db(new)
+    return redirect(url_for('report'))
 
 @app.route("/CV2", methods=['POST', 'GET'])
 def CV_count2():
     # db.create_all()
-    today = str(dt.datetime.now())[:10]
+    today = str(dt.datetime.now())[:9]+'4'
     ip_address = request.remote_addr
     access_token = 'a2f936dd1cc48c'
     print(ip_address)
@@ -1015,7 +1014,7 @@ def CV_count2():
     details_info = handler.getDetails(ip_address)
     new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
     Stats.save_to_db(new)
-    # return redirect(url_for('report'))
+
     return jsonify({'ip': details_info.ip,
                     'country': details_info.country,
                     'location': details_info.city})
