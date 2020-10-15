@@ -974,7 +974,6 @@ def report_new_date2(chosen_date):
                 flash('you have to fill full form')
 
         today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
-        print(Activity.json_meals())
         return render_template('report_full_json.html', form=form_filter,
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                                done_activite_ids=done_activite_ids, meal_dict=meal_dict,
@@ -994,7 +993,7 @@ def report_new_date2(chosen_date):
 def CV_count():
     # db.create_all()
     today = str(dt.datetime.now())[:10]
-    ip_address = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    ip_address = request.remote_addr
     access_token = 'a2f936dd1cc48c'
     handler = ipinfo.getHandler(access_token)
     details_info = handler.getDetails(ip_address)
@@ -1009,11 +1008,9 @@ def CV_count():
 def CV_count2():
     # db.create_all()
     today = str(dt.datetime.now())[:10]
-    fwd = request.environ.get('HTTP_X_FORWARDED_FOR', None)
-    if fwd is None:
-        return request.environ.get('REMOTE_ADDR')
+    ip_address = request.remote_addr
     access_token = 'a2f936dd1cc48c'
-    ip_address = fwd.split(',')[0]
+    print(ip_address)
     handler = ipinfo.getHandler(access_token)
     details_info = handler.getDetails(ip_address)
     new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
@@ -1028,7 +1025,25 @@ def show_stats():
     response = jsonify(Stats.data_json())
     return response
 
-# def requests()
-#     url = 'http://ipinfo.io/json'
-#     response = requests.get(url)
+
+@app.route("/json/date", methods=['GET'])
+def get_date():
+    return jsonify(DateNew.json_date())
+
+@app.route("/json/activity", methods=['GET'])
+def get_activity():
+    return jsonify(Activity.json_all())
+
+@app.route("/json/category", methods=['GET'])
+def get_category():
+    return jsonify(Category.json_all())
+
+@app.route("/delete/day/<chosen_date>", methods=['POST'])
+def remove_whole_day(chosen_date):
+    # chosen_date_objects = DateNew.filter_by(date=chosen_date).delete()
+    chosen_date_objects = DateNew.query.filter(DateNew.date == chosen_date)
+    # or User.query.filter(DateNew.date == chosen_date).delete() ! powerful
+    chosen_date_objects.delete()
+    db.session.commit()
+    return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
