@@ -26,6 +26,7 @@ height: 2.0rem;
 
 
 
+
 </style>
 <div class="container">
     <div class="row">
@@ -50,7 +51,7 @@ height: 2.0rem;
         </h1></div>
         <div class="col-4">
             <form method="post" action="{{ url_for('remove_whole_day', chosen_date=chosen_date) }}">
-                <button class="btn btn-danger btn-lg" type="submit">Clear whole Day!</button>
+                <button class="btn btn-danger btn-lg clean-up" type="submit" onclick="return confirm('Are you sure?')">Clear whole Day!</button>
             </form>
         </div>
         <div class="col-3">
@@ -351,7 +352,8 @@ height: 2.0rem;
 
 </div>
 
-
+<script type=text/javascript src="{{
+  url_for('static', filename='js/test3.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"></script>
 
@@ -412,6 +414,7 @@ var app = new Vue({
 
 
 
+
 </script>
 
 <script>
@@ -437,23 +440,7 @@ var app = new Vue({
         }
       })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</script>
 
 
 </script>
