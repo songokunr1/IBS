@@ -7,6 +7,7 @@ from flask_restful import Api
 from app.helpers import *
 from app import app
 from app import db
+from app import engine
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
@@ -1046,7 +1047,7 @@ def remove_whole_day(chosen_date):
     db.session.commit()
     return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
-@app.route("/drop/stats", methods=['POST'])
+@app.route("/drop/stats", methods=['GET'])
 def drop_stats():
-    Stats.__table__.drop()
+    db.metadata.drop_all(bind=engine, tables=[Stats.__table__])
     return redirect(url_for('report'))
