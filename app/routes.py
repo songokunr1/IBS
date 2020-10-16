@@ -1046,3 +1046,7 @@ def remove_whole_day(chosen_date):
     db.session.commit()
     return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
+@app.route("/drop/stats", methods=['POST'])
+def drop_stats():
+    Stats.__table__.drop()
+    return redirect(url_for('report'))
