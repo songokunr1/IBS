@@ -7,27 +7,9 @@ top: .8rem;
 width: 2.0rem;
 height: 2.0rem;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>
+
+
 <div class="container">
     <div class="row">
         <div class="col-4"></div>
@@ -349,7 +331,9 @@ height: 2.0rem;
             </form>
         </div>
     </div>
-
+    <div id="vm">
+    <p>[[ greeting ]]</p>
+    </div>
 </div>
 
 <script type=text/javascript src="{{
@@ -441,7 +425,13 @@ var app = new Vue({
       })
 
 </script>
-
-
+<script>
+const vm = new Vue({ // Again, vm is our Vue instance's name for consistency.
+    el: '#vm',
+    delimiters: ['[[', ']]'],
+    data: {
+        greeting: 'Hello, Vue!'
+    }
+})
 </script>
 {% endblock content %}
