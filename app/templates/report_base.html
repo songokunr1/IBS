@@ -13,17 +13,15 @@
         <div class="col-6">
             <form method="POST" action="">
                 <fieldset>
-                    <div class="form-group">
+                    <div class="form-group text-center ">
                         {{form_choose_date.date_report(value=today)}}
                     </div>
                     <div class="forms errors">
                         {{form_choose_date.errors}}
                     </div>
                 </fieldset>
-                <div class="col-4 form-group text-center">
-                    {{form_choose_date.submit_date(class="form-control btn btn-info text-center btn-block btn-lg")}}
+                    {{form_choose_date.submit_date(class="form-control btn btn-danger text-center btn-block btn-lg")}}
                     <!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
-                </div>
             </form>
         </div>
     </div>
@@ -48,5 +46,5 @@
 <!--<button class="change"> Click me.</button>-->
 
 <script type=text/javascript src="{{
-  url_for('static', filename='js/test2.js') }}"></script>
+  url_for('static', filename='js/app.js') }}"></script>
 {% endblock content %}
