@@ -2,7 +2,17 @@ from datetime import datetime
 
 from sqlalchemy.orm import backref
 
-from app import db
+from app import db, login_manager
+from flask_login import UserMixin
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return User.query.get(user_id)
+    except:
+        return None
+
 
 
 class Category(db.Model):
@@ -673,3 +683,16 @@ class Stats(db.Model):
     @classmethod
     def get_object_by_date(cls, _date):
         return cls.query.filter_by(date=_date).first()
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
