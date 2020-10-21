@@ -6,15 +6,17 @@ from flask import render_template, url_for, flash, redirect, jsonify, request
 from flask_restful import Api
 from app.helpers import *
 from app import app
-from app import db
+from app import db, bcrypt
 from app import engine
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
-    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal
+    UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
+    LoginForm, RegistrationForm
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
-from app.models import Category, Activity, Date, DateNew, Meal, Stats
+from app.models import Category, Activity, Date, DateNew, Meal, Stats, User
 from app.resources import CategoryResource
 import requests
-import ipinfo
+from app import graphs
+from flask_login import login_user, current_user, logout_user
 
 # todo change model to done/not done, category name in date
 
@@ -1050,4 +1052,73 @@ def remove_whole_day(chosen_date):
 @app.route("/drop/stats", methods=['GET'])
 def drop_stats():
     db.metadata.drop_all(bind=engine, tables=[Stats.__table__])
+    return redirect(url_for('report'))
+
+
+
+labels = [
+    'JAN', 'FEB', 'MAR', 'APR',
+    'MAY', 'JUN', 'JUL', 'AUG',
+    'SEP', 'OCT', 'NOV', 'DEC'
+]
+
+values = [
+    967.67, 1190.89, 1079.75, 1349.19,
+    2328.91, 2504.28, 2873.83, 4764.87,
+    4349.29, 6458.30, 9907, 16297
+]
+
+colors = [
+    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
+    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
+    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
+
+@app.route("/charts", methods=['GET'])
+def charts():
+    bar_labels=labels
+    bar_values=values
+    bar = graphs.create_plot()
+    return render_template('charts.html', title='Bitcoin Monthly Price in USD', plot=bar, max=17000, labels=bar_labels, values=bar_values)
+
+@app.route("/api/chart", methods=['GET', 'POST'])
+def small_api():
+    di = [{'x': [1,2,3,4,5,6],
+          'y': [1,2,4,8,15,33]}]
+    return jsonify(di)
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    db.create_all()
+    if current_user.is_authenticated:
+        return redirect(url_for('report'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f'hello account has been created! you are {form.username.data}', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('report'))
+    print(current_user.is_authenticated)
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            flash(f'you logged in!', 'success')
+            return redirect(url_for('report'))
+        else:
+            flash(f'Login Unsuccessful!', 'success')
+    return render_template('login.html', form=form)
+
+@app.route("/logout")
+def logout():
+    logout_user()
     return redirect(url_for('report'))
