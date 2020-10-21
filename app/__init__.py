@@ -5,6 +5,9 @@ from flask_wtf import CsrfProtect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 # from app.blueprint import blueprint
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
 
 # from flask_cors import CORS
 #
@@ -26,6 +29,8 @@ app.config['WTF_CSRF_ENABLED'] = False
 db = SQLAlchemy(app)
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 session = Session(engine)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 
 csrf = CsrfProtect()
 from app import routes
