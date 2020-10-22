@@ -31,6 +31,8 @@ engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 session = Session(engine)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 csrf = CsrfProtect()
 from app import routes
