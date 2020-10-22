@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import backref
 
 from app import db, login_manager
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 
 @login_manager.user_loader
@@ -280,6 +280,13 @@ class DateNew(db.Model):
     category = db.relationship('Category',
                                primaryjoin='Category.id == DateNew.category_id', lazy='joined', cascade='all,delete')
 
+    username_id = db.Column(db.Integer, default=load_user(current_user))
+
+    @classmethod
+    def get_id(cls):
+        return load_user(current_user)
+
+
     # activity jest obiektem modelu activity!
     def __repr__(self):
         return f"DateNew('{self.date}', '{self.activity}')"
@@ -301,13 +308,14 @@ class DateNew(db.Model):
                  'morning': date_object.morning,
                  'night': date_object.night,
                  'activity_id': date_object.activity_id,
-                 'category_id': date_object.category_id
+                 'category_id': date_object.category_id,
+                 'username_id': date_object.username_id
                  }
                 for date_object in cls.query.all()]
 
     @staticmethod
     def json_from_object(date_object):
-        return {'id': date_object.id,
+        return { 'id': date_object.id,
                  'date': date_object.date,
                  'done': date_object.done,
                  'breakfast': date_object.breakfast,
@@ -316,7 +324,8 @@ class DateNew(db.Model):
                  'morning': date_object.morning,
                  'night': date_object.night,
                  'activity_id': date_object.activity_id,
-                 'category_id': date_object.category_id
+                 'category_id': date_object.category_id,
+                 'username_id': date_object.username_id
                  }
 
     @staticmethod
@@ -346,7 +355,8 @@ class DateNew(db.Model):
                  'activity_id': date_object.activity_id,
                  'category_id': date_object.category_id,
                  'activity_name': Activity.find_name_by_id(date_object.activity_id),
-                 'category_name': Category.find_name_by_id(date_object.category_id)
+                 'category_name': Category.find_name_by_id(date_object.category_id),
+                 'username_id': date_object.username_id
                  }
                 for date_object in cls.find_activitys_by_date(today)]
 
@@ -386,42 +396,46 @@ class DateNew(db.Model):
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first()
 
     @classmethod
     def find_dates_by_activity_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first()
 
     @classmethod
     def find_activitys_by_date(cls, _date):
-        return cls.query.filter_by(date=_date).all()
+        return cls.query.filter_by(date=_date, username_id=current_user.id).all()
+
+    @classmethod
+    def delete_activitys_by_date(cls, _date):
+        return cls.query.filter_by(date=_date, username_id=current_user.id).delete()
 
     @classmethod
     def find_activitys_by_date_and_type(cls, _date, breakfast=False, lunch=False, last_meal=False, morning=False,
                                         night=False):
         return cls.query.filter_by(date=_date, breakfast=breakfast, lunch=lunch, last_meal=last_meal, morning=morning,
-                                   night=night).all()
+                                   night=night, username_id=current_user.id).all()
 
     @classmethod
     def find_activitys_by_date_id_and_type(cls, _date, _id, breakfast=False, lunch=False, last_meal=False, morning=False,
                                         night=False):
         return cls.query.filter_by(date=_date, activity_id=_id, breakfast=breakfast, lunch=lunch, last_meal=last_meal, morning=morning,
-                                   night=night).first()
+                                   night=night,username_id=current_user.id).first()
 
     @classmethod
     def find_date_by_activity_id_and_date(cls, _id, date):
-        return cls.query.filter_by(activity_id=_id, date=date).first()
+        return cls.query.filter_by(activity_id=_id, date=date, username_id=current_user.id).first()
 
 
 
 
     @classmethod
     def find_date_by_category_id_and_date(cls, _id, date):
-        return cls.query.filter_by(category_id=_id, date=date).first()
+        return cls.query.filter_by(category_id=_id, date=date, username_id=current_user.id).first()
 
     @classmethod
     def find_date_by_date_id_and_date(cls, _id, date):
-        return cls.query.filter_by(id=_id, date=date).first()
+        return cls.query.filter_by(id=_id, date=date, username_id=current_user.id).first()
 
     def save_to_db(self):
         db.session.add(self)
@@ -433,7 +447,7 @@ class DateNew(db.Model):
             type_true_or_false = cls.set_true_for_type_of_raport(type)
             category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
             today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
-                            activity_id=activity_id)
+                            activity_id=activity_id, username=current_user.id)
             DateNew.save_to_db(today)
             # done_activite_ids = [single.activity_id for single in
             #                      DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
