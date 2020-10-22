@@ -16,7 +16,7 @@ from app.models import Category, Activity, Date, DateNew, Meal, Stats, User
 from app.resources import CategoryResource
 import requests
 from app import graphs
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 # todo change model to done/not done, category name in date
 
@@ -681,6 +681,7 @@ def report_new_vue1():
 
 
 @app.route("/report/<type>/<chosen_date>", methods=['POST', 'GET'])
+@login_required
 def report_new_date(type, chosen_date):
     form_filter = FilterField()
     full_activity_list = Activity.list_of_activity_objects()
@@ -725,7 +726,7 @@ def report_new_date(type, chosen_date):
             for activity_id in list_activity_from_meal:
                 category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
                 today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
-                                activity_id=activity_id)
+                                activity_id=activity_id, username_id=current_user.id)
                 DateNew.save_to_db(today)
                 flash('Your update has been created!', 'success')
                 done_activite_ids = [single.activity_id for single in
@@ -746,6 +747,7 @@ def report_new_date(type, chosen_date):
 
 
 @app.route("/create_meal", methods=['POST', 'GET'])
+@login_required
 def create_meal():
     form_create_meal = CreateMeal()
     print(Activity.find_activities_by_x_category('cukier'))
@@ -776,6 +778,7 @@ def create_meal():
 
 
 @app.route("/update", methods=['POST', 'GET'])
+@login_required
 def update():
     form_category = UpdateCategory()
     form_activity = UpdateActivity()
@@ -806,6 +809,7 @@ def update():
 
 
 @app.route("/add", methods=['POST', 'GET'])
+@login_required
 def add():
     form_category = AddCategory()
     form_activity = AddActivity()
@@ -845,6 +849,7 @@ def add():
                            form_activity=form_activity, form_category=form_category)
 
 @app.route("/delete", methods=['POST', 'GET'])
+@login_required
 def delete():
     form_category = DeleteCategory()
     form_activity = DeleteActivity()
@@ -885,6 +890,7 @@ def delete():
 
 
 @app.route("/report2/<chosen_date>", methods=['POST', 'GET'])
+@login_required
 def report_new_date2(chosen_date):
     date_info = get_date_info(chosen_date)
     form_filter = FilterField()
@@ -950,7 +956,7 @@ def report_new_date2(chosen_date):
                 except:
                     category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
                     today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
-                                    activity_id=activity_id)
+                                    activity_id=activity_id, username_id=current_user.id)
                     DateNew.save_to_db(today)
         print(type_checkbox['type'])
         print(type_checkbox['activity_ids'])
@@ -1041,17 +1047,23 @@ def get_category():
     return jsonify(Category.json_all())
 
 @app.route("/delete/day/<chosen_date>", methods=['POST'])
+@login_required
 def remove_whole_day(chosen_date):
-    # chosen_date_objects = DateNew.filter_by(date=chosen_date).delete()
-    chosen_date_objects = DateNew.query.filter(DateNew.date == chosen_date)
+    DateNew.delete_activitys_by_date(chosen_date)
+    # chosen_date_objects = DateNew.query.filter(DateNew.date == chosen_date)
     # or User.query.filter(DateNew.date == chosen_date).delete() ! powerful
-    chosen_date_objects.delete()
+    # chosen_date_objects.delete()
     db.session.commit()
     return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
 @app.route("/drop/stats", methods=['GET'])
 def drop_stats():
     db.metadata.drop_all(bind=engine, tables=[Stats.__table__])
+    return redirect(url_for('report'))
+
+@app.route("/drop/stats", methods=['GET'])
+def create_all():
+    db.create_all()
     return redirect(url_for('report'))
 
 
@@ -1108,12 +1120,15 @@ def login():
         return redirect(url_for('report'))
     print(current_user.is_authenticated)
     form = LoginForm()
+    flash(f'please log in', 'success')
+
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             flash(f'you logged in!', 'success')
-            return redirect(url_for('report'))
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('report'))
         else:
             flash(f'Login Unsuccessful!', 'success')
     return render_template('login.html', form=form)
@@ -1122,3 +1137,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('report'))
+
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template('account.html')
+
