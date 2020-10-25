@@ -16,3 +16,4 @@ flask_login
 plotly
 pandas
 numpy
+email_validator
