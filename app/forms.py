@@ -147,7 +147,9 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-
+class GetNameForBackupForm(FlaskForm):
+    backup_name = TextAreaField('new_category')
+    submit_new_backup = SubmitField()
 
 # class ChooseMultiple(FlaskForm):
 #     filter = FilterField
