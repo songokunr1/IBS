@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 
 import pandas as pd
 import numpy as np
-import json
+# import json
 
 
 def create_plot():
@@ -22,7 +22,7 @@ def create_plot():
         )
     ]
 
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+    # graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return graphJSON
+    # return graphJSON
 
