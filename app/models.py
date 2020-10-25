@@ -4,7 +4,10 @@ from sqlalchemy.orm import backref
 
 from app import db, login_manager
 from flask_login import UserMixin, current_user
-
+from sqlalchemy.dialects.postgresql.json import JSONB
+import json
+from psycopg2.extensions import register_adapter
+import pandas as pd
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -18,13 +21,12 @@ def load_user(user_id):
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(20), unique=True, nullable=False)
+    category = db.Column(db.String(20), unique=False, nullable=False)
     activity = db.relationship('Activity', lazy='dynamic', cascade='all,delete')
     dates = db.relationship('Date', lazy='dynamic', cascade='all,delete')
     datesnew = db.relationship("DateNew", lazy='dynamic', cascade='all,delete')
+    username_id = db.Column(db.Integer, default=load_user(current_user))
 
-    def __init__(self, category):
-        self.category = category
 
     #
     # def __repr__(self):
@@ -41,19 +43,19 @@ class Category(db.Model):
     def json_all(cls):
         cls.query.all()
         return [{'name': single.category,
-                 'id': single.id} for single in cls.query.all()]
+                 'id': single.id} for single in cls.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def json_symptoms(cls):
         cls.query.all()
         return [{'name': single.category,
-                 'id': single.id} for single in cls.query.all()
+                 'id': single.id} for single in cls.query.filter_by(username_id=current_user.id).all()
                 if single.category in ['objawy', 'stres', 'uzywki']]
 
     def json_meals(cls):
         cls.query.all()
         return [{'name': single.category,
-                 'id': single.id} for single in cls.query.all()
+                 'id': single.id} for single in cls.query.filter_by(username_id=current_user.id).all()
                 if single.category not in ['objawy', 'stres', 'uzywki']]
 
     # __getitem__
@@ -63,27 +65,37 @@ class Category(db.Model):
     #     self.bricks.bricksId[index] = value
     @classmethod
     def find_by_category(cls, category):
-        return cls.query.filter_by(category=category).first()
+        return cls.query.filter_by(category=category, username_id=current_user.id).first()
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first()
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(category= name, username_id=current_user.id).first()
+
+    @classmethod
+    def delete_all_objects_by_current_user(cls):
+        cls.query.filter_by(username_id=current_user.id).delete()
+        db.session.commit()
+
 
     @classmethod
     def find_name_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first().category
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first().category
 
     @classmethod
     def list_of_ids(cls):
-        return cls.query.all()
+        return cls.query.filter_by(username_id=current_user.id).all()
 
     @classmethod
     def list_of_category_objects(cls):
-        return [single_category for single_category in cls.query.all()]
+        return [single_category for single_category in cls.query.filter_by(username_id=current_user.id).all()]
 
     @staticmethod
     def list_of_category():
-        return [single.category for single in Category.query.all()]
+        return [single.category for single in Category.query.filter_by(username_id=current_user.id).all()]
 
     @staticmethod
     def list_of_not_meal_category():
@@ -105,11 +117,12 @@ class Category(db.Model):
 class Activity(db.Model):
     __tablename__ = 'activity'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(50), unique=False, nullable=False)
     # type = db.Column(db.String(50), unique=True, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     date_id = db.relationship("Date", back_populates="activity", cascade='all,delete')
     datenew_id = db.relationship("DateNew", lazy='dynamic', cascade='all,delete')
+    username_id = db.Column(db.Integer, default=load_user(current_user))
 
     # def __init__(self, name=None, date_start=None, date_end=None, priority=None, category_id=None):
     #     self.data = (name, date_start, date_end, priority, category_id)
@@ -128,7 +141,7 @@ class Activity(db.Model):
         return [{'name': single.name,
                  'id': single.id,
                  'category_id': single.category_id,
-                 'category_name:': Category.find_name_by_id(single.category_id)} for single in cls.query.all()]
+                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def json_symptoms(cls):
@@ -136,8 +149,15 @@ class Activity(db.Model):
         return [{'name': single.name,
                  'id': single.id,
                  'category_id': single.category_id,
-                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.all()
+                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.filter_by(username_id=current_user.id).all()
                 if Category.find_name_by_id(single.category_id) in ['objawy', 'stres', 'uzywki', 'leki']]
+
+
+    @classmethod
+    def delete_all_objects_by_current_user(cls):
+        cls.query.filter_by(username_id=current_user.id).delete()
+        db.session.commit()
+
 
     @classmethod
     def find_activities_by_x_category(cls, *args):
@@ -145,46 +165,50 @@ class Activity(db.Model):
         return [{'name': single.name,
                  'id': single.id,
                  'category_id': single.category_id,
-                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.all()
+                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.filter_by(username_id=current_user.id).all()
                 if Category.find_name_by_id(single.category_id) in [*args]]
 
 #TODO: you are giving X arguments > and we getting dictionary with all activies within that category_args
     @classmethod
     def json_meals(cls):
-        cls.query.all()
+        cls.query.filter_by(username_id=current_user.id).all()
         return [{'name': single.name,
                  'id': single.id,
                  'category_id': single.category_id,
-                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.all()
+                 'category_name': Category.find_name_by_id(single.category_id)} for single in cls.query.filter_by(username_id=current_user.id).all()
                 if Category.find_name_by_id(single.category_id) not in ['objawy', 'stres', 'uzywki', 'leki']]
 
     @staticmethod
     def list_of_activity():
-        return [single.name for single in Activity.query.all()]
+        return [single.name for single in Activity.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first()
 
     @classmethod
     def find_by_name(cls, name):
-        return cls.query.filter_by(name=name).first()
+        return cls.query.filter_by(name=name, username_id=current_user.id).first()
 
     @classmethod
     def find_name_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first().name
+        data = cls.query.filter_by(id=_id, username_id=current_user.id).first()
+        if data:
+            return cls.query.filter_by(id=_id, username_id=current_user.id).first().name
+        else:
+            return None
 
     @classmethod
     def find_by_category_id(cls, _category_id):
-        return cls.query.filter_by(category_id=_category_id).all()
+        return cls.query.filter_by(category_id=_category_id, username_id=current_user.id).all()
 
     @classmethod
     def list_of_activity_objects(cls):
-        return [single_activity for single_activity in cls.query.all()]
+        return [single_activity for single_activity in cls.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def filer_activity_objects(cls, charts):
-        return [single_activity for single_activity in cls.query.all() if charts in single_activity.name.lower()]
+        return [single_activity for single_activity in cls.query.filter_by(username_id=current_user.id).all() if charts in single_activity.name.lower()]
 
     def save_to_db(self):
         db.session.add(self)
@@ -279,12 +303,8 @@ class DateNew(db.Model):
                             , nullable=False)
     category = db.relationship('Category',
                                primaryjoin='Category.id == DateNew.category_id', lazy='joined', cascade='all,delete')
-
     username_id = db.Column(db.Integer, default=load_user(current_user))
 
-    @classmethod
-    def get_id(cls):
-        return load_user(current_user)
 
 
     # activity jest obiektem modelu activity!
@@ -477,8 +497,12 @@ class Meal(db.Model):
     name = db.Column(db.String(100), nullable=False)
     ingredients = db.Column(db.String(100), nullable=False)
     day_time = db.Column(db.String(20), default='lunch', nullable=False)
+    username_id = db.Column(db.Integer, default=load_user(current_user))
 
 
+    @classmethod
+    def get_id(cls):
+        return load_user(current_user)
 
     @classmethod
     def get_list_of_activities(cls, meal_ids):
@@ -492,8 +516,11 @@ class Meal(db.Model):
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
-
+        meal = cls.query.filter_by(id=_id, username_id=current_user.id).first()
+        if meal:
+            return cls.query.filter_by(id=_id, username_id=current_user.id).first()
+        else:
+            return None
     @classmethod
     def get_list_of_activities_by_json(cls, meal_json):
         meal_ids_by_json = {'breakfast': [], 'lunch': [], 'last_meal': []}
@@ -525,7 +552,7 @@ class Meal(db.Model):
 
     @classmethod
     def list_of_meals(cls):
-        return [meal_object.name for meal_object in cls.query.all()]
+        return [meal_object.name for meal_object in cls.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def json_meal(cls):
@@ -534,7 +561,7 @@ class Meal(db.Model):
                  'ingredients': meal_object.ingredients,
                  'date_time': meal_object.day_time,
                  'list_of_ingredients_names': cls.list_of_activity_names_for_meal_id(meal_object.id)} for meal_object in
-                cls.query.all()]
+                cls.query.filter_by(username_id=current_user.id).all()]
 
     @classmethod
     def list_of_activity_ids_for_meal_id(cls, single_id):
@@ -552,32 +579,32 @@ class Meal(db.Model):
 
     @classmethod
     def find_meal_by_name(cls, name):
-        return cls.query.filter_by(name=name).first().name
+        return cls.query.filter_by(name=name, username_id=current_user.id).first().name
 
     @classmethod
     def find_meal_by_name(cls, name):
-        return cls.query.filter_by(name=name).first().name
+        return cls.query.filter_by(name=name, username_id=current_user.id).first().name
 
     @classmethod
     def find_meal_by_id(cls, id):
-        return cls.query.filter_by(id=id).first().name
+        return cls.query.filter_by(id=id, username_id=current_user.id).first().name
 
     @classmethod
     def find_meal_by_id(cls, id):
-        return cls.query.filter_by(id=id).first().name
+        return cls.query.filter_by(id=id, username_id=current_user.id).first().name
 
     @classmethod
     def find_list_of_ingredients_by_id(cls, _id):
-        all = cls.query.filter_by(id=_id).first().ingredients
+        all = cls.query.filter_by(id=_id, username_id=current_user.id).first().ingredients
         return all.split(',')
 
     @classmethod
     def find_list_of_ingredients_by_id(cls, id):
-        all = cls.query.filter_by(id=id).first().ingredients
+        all = cls.query.filter_by(id=id, username_id=current_user.id).first().ingredients
         return all.split(',')
 
     def find_string_of_ingredients_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first().ingredients
+        return cls.query.filter_by(id=_id, username_id=current_user.id).first().ingredients
 
     @classmethod
     def list_of_ingredients(cls, meal):
@@ -710,3 +737,75 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Template(db.Model, UserMixin):
+    __tablename__ = 'template'
+
+    id = db.Column(db.Integer, primary_key=True)
+    template_name = db.Column(db.String(20), unique=True, nullable=False)
+    json_template = db.Column(JSONB, nullable=False)
+    # category = {'category': []}
+    # activity = {'category_id'}
+
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+    #TODO
+    # backup category with activity(json_all)
+    # add new record with category and activity
+    # check id for specyfic category
+    # get full json with category and activity and category_id
+    # add activity to database from get_full_json
+
+
+        # for single in instances:
+        #     json_object.append({'category': single['category_name'],
+        #                                      'activity': single['name']})
+        #     record_category = Template(template_name=name, category=True, record_name=single['category_name'])
+        #     record_activity = Template(template_name=name, activity=True, record_name=single['category_name'])
+        #     db.session.add(record_category)
+        #     db.session.add(record_activity)
+        # db.session.commit()
+
+
+
+    @classmethod
+    def create_new_record_from_template(cls, name, instances):
+        db.create_all()
+        json_object = {'instances': []}
+        # print(instances)
+        for single in instances:
+            json_object['instances'].append({'category': single['category_name'],
+                                             'activity': single['name']})
+
+
+        new = Template(template_name=name, json_template=json_object)
+        cls.save_to_db(new)
+
+    @classmethod
+    def update_category_id_from_created_instance(cls):
+        pass
+    @classmethod
+    def get_template_from_categories_and_activities_names(cls, instances):
+        #TODO
+        # add to database all categories and commit!
+        # craete empty instance list
+        # loop by tuple act and category // objects[{category:x, 'activity': b}]
+        #  here you write find_category_id_by_cat_name
+        #  adding to instance list
+        return {
+    "instances": [{
+        "category_id": 1,
+        "category": 2,
+        "activity": 3
+    }]
+}
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(template_name=name).first()
+
+    #TODO
+    # we have template, now we need to add it to liste category
