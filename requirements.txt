@@ -16,4 +16,3 @@ flask_login
 plotly
 pandas
 numpy
-json
