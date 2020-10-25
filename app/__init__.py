@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 # from app.blueprint import blueprint
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 
 # from flask_cors import CORS
 #
@@ -34,7 +34,7 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 csrf = CsrfProtect()
 from app import routes
