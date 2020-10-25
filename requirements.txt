@@ -13,3 +13,7 @@ requests
 ipinfo
 flask_bcrypt
 flask_login
+plotly
+pandas
+numpy
+json
