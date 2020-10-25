@@ -1,22 +1,20 @@
 import json
-from datetime import date, timedelta
-import datetime as dt
 
 from flask import render_template, url_for, flash, redirect, jsonify, request
+from flask_login import login_user, current_user, logout_user, login_required
 from flask_restful import Api
-from app.helpers import *
+
 from app import app
 from app import db, bcrypt
 from app import engine
+from app import graphs
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
-    LoginForm, RegistrationForm
+    LoginForm, RegistrationForm, GetNameForBackupForm
+from app.helpers import *
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
-from app.models import Category, Activity, Date, DateNew, Meal, Stats, User
+from app.models import Category, Activity, Date, DateNew, Meal, Stats, User, Template
 from app.resources import CategoryResource
-import requests
-from app import graphs
-from flask_login import login_user, current_user, logout_user, login_required
 
 # todo change model to done/not done, category name in date
 
@@ -375,7 +373,7 @@ def init_category():
     for category in category_init:
         print(Category.find_by_category(category['category']))
         if Category.find_by_category(category['category']) == None:
-            new_record = Category(category=category['category'])
+            new_record = Category(category=category['category'], username_id=current_user.id)
             Category.save_to_db(new_record)
     return render_template('habit.html')
 
@@ -386,7 +384,8 @@ def init_activity():
         print(Activity.find_by_name(each_record['name']))
         if Activity.find_by_name(each_record['name']) == None:
             category_id_for_new_record = (Category.find_by_category(each_record['category_name']).id)
-            new_record = Activity(name=each_record['name'], category_id=category_id_for_new_record)
+            new_record = Activity(name=each_record['name'], category_id=category_id_for_new_record,
+                                  username_id=current_user.id)
             Activity.save_to_db(new_record)
     return render_template('habit.html')
 
@@ -762,7 +761,7 @@ def create_meal():
         meal_name = form_create_meal.meal_name.data
         ingredients = Meal.ingredients_for_meal(**ing)
         try:
-            assert(Meal.query.filter_by(name=meal_name).first().name, f' good, {meal_name} meal not exist in database')
+            assert (Meal.query.filter_by(name=meal_name).first().name, f' good, {meal_name} meal not exist in database')
             print(f'the {meal_name} is in the menu')
             return render_template('meal.html', form_create_meal=form_create_meal, ingredients=ingredients,
                                    meal_name=meal_name, in_menu=True)
@@ -820,7 +819,7 @@ def add():
     print(form_category.submit_new_category.data)
     print(form_activity.validate_on_submit())
     if form_category.validate_on_submit() and form_category.submit_new_category.data:
-        a_category = Category(category=form_category.category_name.data)
+        a_category = Category(category=form_category.category_name.data, username_id=current_user.id)
         Category.save_to_db(a_category)
         # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
         print('we have change it')
@@ -837,7 +836,8 @@ def add():
         except:
             print('except')
             print(form_activity.activity_name.data, "form_activity.activity_name.data")
-            a_activity = Activity(name=form_activity.activity_name.data, category_id=form_activity.category_id.data)
+            a_activity = Activity(name=form_activity.activity_name.data, category_id=form_activity.category_id.data,
+                                  username_id=current_user.id)
             # if form_activity.box.data:
             #     a_activity.category_id = form_activity.activity_category_id.data
             Activity.save_to_db(a_activity)
@@ -847,6 +847,7 @@ def add():
                                form_activity=form_activity, form_category=form_category, added_activity=True)
     return render_template('add.html',
                            form_activity=form_activity, form_category=form_category)
+
 
 @app.route("/delete", methods=['POST', 'GET'])
 @login_required
@@ -877,14 +878,15 @@ def delete():
         Activity.delete_from_db(a_activity)
         print(f'Successful deleted category')
         return render_template('delete.html',
-                               form_activity=form_activity, form_category=form_category,form_meal=form_meal,
+                               form_activity=form_activity, form_category=form_category, form_meal=form_meal,
                                added_activity=True)
     if form_meal.validate_on_submit() and form_meal.submit_delete_meal.data:
         a_meal = Meal.find_by_id(_id=form_meal.meal_id.data)
         Meal.delete_from_db(a_meal)
         # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
         print(f'Successful deleted category')
-        return redirect(url_for('delete', form_activity=form_activity, form_category=form_category, form_meal=form_meal))
+        return redirect(
+            url_for('delete', form_activity=form_activity, form_category=form_category, form_meal=form_meal))
     return render_template('delete.html',
                            form_activity=form_activity, form_category=form_category, form_meal=form_meal)
 
@@ -966,7 +968,8 @@ def report_new_date2(chosen_date):
             list_time_of_meal = request.form.getlist('meal_time')
             list_meal_checkboxes = request.form.getlist('checkbox_meal')
             try:
-                json_list_activity_from_meal = Meal.get_activities_by_time_of_meal_and_meal_id(list_time_of_meal, list_meal_checkboxes)
+                json_list_activity_from_meal = Meal.get_activities_by_time_of_meal_and_meal_id(list_time_of_meal,
+                                                                                               list_meal_checkboxes)
                 for single_type in DateNew.list_of_types():
                     try:
                         DateNew.add_to_db_by_list_and_type(list_of_activities=json_list_activity_from_meal[single_type],
@@ -976,7 +979,7 @@ def report_new_date2(chosen_date):
                         flash('you have to fill full form')
                         continue
             except UnboundLocalError as e:
-                error=('you have to fill form correctly')
+                error = ('you have to fill form correctly')
                 flash('you have to fill full form')
             except IndexError as e:
                 error = ('you have to fill form correctly')
@@ -998,13 +1001,14 @@ def report_new_date2(chosen_date):
                            date_info=date_info
                            )
 
+
 @app.route("/CV", methods=['POST', 'GET'])
 def CV_count():
     db.create_all()
     today = str(dt.datetime.now())[:10]
     a = Stats.is_date_in_database(today)
     if a:
-        object= Stats.get_object_by_date(today)
+        object = Stats.get_object_by_date(today)
         object.visits += 1
         Stats.save_to_db(object)
     else:
@@ -1012,10 +1016,11 @@ def CV_count():
         Stats.save_to_db(new)
     return redirect(url_for('report'))
 
+
 @app.route("/CV2", methods=['POST', 'GET'])
 def CV_count2():
     # db.create_all()
-    today = str(dt.datetime.now())[:9]+'4'
+    today = str(dt.datetime.now())[:9] + '4'
     ip_address = request.remote_addr
     access_token = 'a2f936dd1cc48c'
     print(ip_address)
@@ -1028,6 +1033,7 @@ def CV_count2():
                     'country': details_info.country,
                     'location': details_info.city})
 
+
 @app.route("/show_stats", methods=['POST', 'GET'])
 def show_stats():
     response = jsonify(Stats.data_json())
@@ -1038,13 +1044,16 @@ def show_stats():
 def get_date():
     return jsonify(DateNew.json_date())
 
+
 @app.route("/json/activity", methods=['GET'])
 def get_activity():
     return jsonify(Activity.json_all())
 
+
 @app.route("/json/category", methods=['GET'])
 def get_category():
     return jsonify(Category.json_all())
+
 
 @app.route("/delete/day/<chosen_date>", methods=['POST'])
 @login_required
@@ -1056,16 +1065,17 @@ def remove_whole_day(chosen_date):
     db.session.commit()
     return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
+
 @app.route("/drop/stats", methods=['GET'])
 def drop_stats():
     db.metadata.drop_all(bind=engine, tables=[Stats.__table__])
     return redirect(url_for('report'))
 
+
 @app.route("/drop/stats", methods=['GET'])
 def create_all():
     db.create_all()
     return redirect(url_for('report'))
-
 
 
 labels = [
@@ -1085,18 +1095,22 @@ colors = [
     "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
     "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
+
 @app.route("/charts", methods=['GET'])
 def charts():
-    bar_labels=labels
-    bar_values=values
+    bar_labels = labels
+    bar_values = values
     bar = graphs.create_plot()
-    return render_template('charts.html', title='Bitcoin Monthly Price in USD', plot=bar, max=17000, labels=bar_labels, values=bar_values)
+    return render_template('charts.html', title='Bitcoin Monthly Price in USD', plot=bar, max=17000, labels=bar_labels,
+                           values=bar_values)
+
 
 @app.route("/api/chart", methods=['GET', 'POST'])
 def small_api():
-    di = [{'x': [1,2,3,4,5,6],
-          'y': [1,2,4,8,15,33]}]
+    di = [{'x': [1, 2, 3, 4, 5, 6],
+           'y': [1, 2, 4, 8, 15, 33]}]
     return jsonify(di)
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -1133,6 +1147,7 @@ def login():
             flash(f'Login Unsuccessful!', 'success')
     return render_template('login.html', form=form)
 
+
 @app.route("/logout")
 def logout():
     logout_user()
@@ -1142,5 +1157,41 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
+    db.create_all()
     return render_template('account.html')
 
+
+@app.route("/db/backup", methods=['GET', 'POST'])
+def backup_structure_of_db():
+    form = GetNameForBackupForm()
+    if form.validate_on_submit():
+        all_records = Activity.json_all()
+        print(form.backup_name)
+        Template.create_new_record_from_template(name=form.backup_name.data, instances=all_records)
+        return redirect(url_for('backup_structure_of_db'))
+    return render_template('backup.html', form=form)
+
+
+@app.route("/db/restore", methods=['GET', 'POST'])
+def restore_structure_of_db():
+    full_backup_to_restore = Template.find_by_name('full_Ewa').json_template['instances']
+    Activity.delete_all_objects_by_current_user()
+    Category.delete_all_objects_by_current_user()
+    # new_category = Category(category='gluten', username_id=current_user.id)
+    # db.session.add(new_category)
+    # db.session.commit()
+    for single_record in full_backup_to_restore:
+        print(Category.find_by_name(single_record['category']))
+        print(not Category.find_by_name(single_record['category']))
+        if not Category.find_by_name(single_record['category']):
+            print(single_record['category'])
+            new_category = Category(category=single_record['category'], username_id=current_user.id)
+            db.session.add(new_category)
+            db.session.commit()
+        new_activity = Activity(name=single_record['activity'],
+                                category_id=Category.find_by_name(single_record['category']).id,
+                                username_id=current_user.id)
+        db.session.add(new_activity)
+        db.session.commit()
+    return redirect(url_for('backup_structure_of_db'))
+    # form chose from list and apply to db
