@@ -10,7 +10,7 @@ from app import engine
 from app import graphs
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
-    LoginForm, RegistrationForm, GetNameForBackupForm
+    LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin
 from app.helpers import *
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal, Stats, User, Template
@@ -1134,8 +1134,14 @@ def login():
         return redirect(url_for('report'))
     print(current_user.is_authenticated)
     form = LoginForm()
+    form_guest = FormGuestLogin()
     flash(f'please log in', 'success')
-
+    if form_guest.validate_on_submit() and form_guest.click_here_to_test_as_guest.data:
+        user = User.query.filter_by(email='guest@gmail.com').first()
+        login_user(user)
+        flash(f'you logged in!', 'success')
+        next_page = request.args.get('next')
+        return redirect(next_page) if next_page else redirect(url_for('report'))
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
@@ -1145,7 +1151,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('report'))
         else:
             flash(f'Login Unsuccessful!', 'success')
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, form_guest=form_guest)
 
 
 @app.route("/logout")
