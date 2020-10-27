@@ -151,6 +151,9 @@ class GetNameForBackupForm(FlaskForm):
     backup_name = TextAreaField('new_category')
     submit_new_backup = SubmitField()
 
+
+class FormGuestLogin(FlaskForm):
+    click_here_to_test_as_guest = SubmitField()
 # class ChooseMultiple(FlaskForm):
 #     filter = FilterField
 #     Filter_string = 'mleko'  #ta wartość powinna być zbierana przez FlaskForm <<
