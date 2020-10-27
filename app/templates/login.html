@@ -4,7 +4,10 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Log In</legend>
+            <legend class="border-bottom mb-4">Log In or use as guest</legend>
+             <div class="form-group">
+                 {{ form_guest.click_here_to_test_as_guest(class="form-control-label btn-danger btn-lg") }}
+
             <div class="form-group">
                 {{ form.email.label(class="form-control-label") }}
                 {% if form.email.errors %}
