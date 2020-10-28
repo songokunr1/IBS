@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <br><br>><br><br><br><br>
+    <br><br><br><br><br><br>
     <div class="row ">
         <div class="col-2"></div>
 
@@ -15,9 +15,6 @@
                 <fieldset>
                     <div class="form-group text-center ">
                         {{form_choose_date.date_report(value=today)}}
-                    </div>
-                    <div class="forms errors">
-                        {{form_choose_date.errors}}
                     </div>
                 </fieldset>
                     {{form_choose_date.submit_date(class="form-control btn btn-danger text-center btn-block btn-lg")}}
