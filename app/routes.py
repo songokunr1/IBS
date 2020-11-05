@@ -960,11 +960,11 @@ def report_new_date2(chosen_date):
                     today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
                                     activity_id=activity_id, username_id=current_user.id)
                     DateNew.save_to_db(today)
+                    flash('Looks like you added new records into database!')
         print(type_checkbox['type'])
         print(type_checkbox['activity_ids'])
 
         if type_checkbox['type'] == 'meal':
-            flash('you have to fill full form')
             list_time_of_meal = request.form.getlist('meal_time')
             list_meal_checkboxes = request.form.getlist('checkbox_meal')
             try:
@@ -976,14 +976,11 @@ def report_new_date2(chosen_date):
                                                            type=single_type, chosen_date=chosen_date)
                     except KeyError as e:
                         error = ('you have to fill form correctly')
-                        flash('you have to fill full form')
                         continue
             except UnboundLocalError as e:
                 error = ('you have to fill form correctly')
-                flash('you have to fill full form')
             except IndexError as e:
                 error = ('you have to fill form correctly')
-                flash('you have to fill full form')
 
         today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
         return render_template('report_full_json.html', form=form_filter,
@@ -1000,7 +997,6 @@ def report_new_date2(chosen_date):
                            activity_meals=activity_meals, today=today,
                            date_info=date_info
                            )
-
 
 @app.route("/CV", methods=['POST', 'GET'])
 def CV_count():
@@ -1135,7 +1131,6 @@ def login():
     print(current_user.is_authenticated)
     form = LoginForm()
     form_guest = FormGuestLogin()
-    flash(f'please log in', 'success')
     if form_guest.validate_on_submit() and form_guest.click_here_to_test_as_guest.data:
         user = User.query.filter_by(email='guest@gmail.com').first()
         login_user(user)
