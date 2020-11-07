@@ -295,6 +295,7 @@ class DateNew(db.Model):
     last_meal = db.Column(db.Boolean, default=False)
     morning = db.Column(db.Boolean, default=False)
     night = db.Column(db.Boolean, default=False)
+    prediction = db.Column(db.Boolean, default=False)
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id'),
                             nullable=False)
     activity = db.relationship('Activity',
@@ -329,7 +330,8 @@ class DateNew(db.Model):
                  'night': date_object.night,
                  'activity_id': date_object.activity_id,
                  'category_id': date_object.category_id,
-                 'username_id': date_object.username_id
+                 'username_id': date_object.username_id,
+                 'prediction': date_object.prediction
                  }
                 for date_object in cls.query.all()]
 
@@ -345,7 +347,8 @@ class DateNew(db.Model):
                  'night': date_object.night,
                  'activity_id': date_object.activity_id,
                  'category_id': date_object.category_id,
-                 'username_id': date_object.username_id
+                 'username_id': date_object.username_id,
+                 'prediction': date_object.prediction
                  }
 
     @staticmethod
@@ -376,7 +379,8 @@ class DateNew(db.Model):
                  'category_id': date_object.category_id,
                  'activity_name': Activity.find_name_by_id(date_object.activity_id),
                  'category_name': Category.find_name_by_id(date_object.category_id),
-                 'username_id': date_object.username_id
+                 'username_id': date_object.username_id,
+                 'prediction': date_object.prediction
                  }
                 for date_object in cls.find_activitys_by_date(today)]
 
@@ -425,6 +429,10 @@ class DateNew(db.Model):
     @classmethod
     def find_activitys_by_date(cls, _date):
         return cls.query.filter_by(date=_date, username_id=current_user.id).all()
+
+    @classmethod
+    def find_object_by_id_and_date(cls, _id, _date):
+        return cls.query.filter_by(date=_date,id=_id, username_id=current_user.id).first()
 
     @classmethod
     def delete_activitys_by_date(cls, _date):
