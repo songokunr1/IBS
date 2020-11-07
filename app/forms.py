@@ -156,14 +156,6 @@ class FormGuestLogin(FlaskForm):
     click_here_to_test_as_guest = SubmitField()
 
 
-class FormPredictionGuess(FlaskForm):
-    def __init__(self, date, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.all_date_records = DateNew.json_full_info_by_date(date)
-        self.prediction.choices = [(single['id'], single['activity_name']) for single in self.all_date_records]
-    prediction = SelectField('Type', coerce=int)
-    submit_prediction = SubmitField()
-
 # TODO
 # predicion: => get all record from day x which are in database -> get their ids(datanew), names
 
