@@ -10,7 +10,7 @@ from app import engine
 from app import graphs
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
-    LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin, FormPredictionGuess
+    LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin
 from app.helpers import *
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal, Stats, User, Template
