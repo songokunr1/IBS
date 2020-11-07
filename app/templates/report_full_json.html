@@ -7,6 +7,9 @@ top: .8rem;
 width: 2.0rem;
 height: 2.0rem;
 }
+
+
+
 </style>
 
 
@@ -33,7 +36,9 @@ height: 2.0rem;
         </h1></div>
         <div class="col-4">
             <form method="post" action="{{ url_for('remove_whole_day', chosen_date=chosen_date) }}">
-                <button class="btn btn-danger btn-lg clean-up" type="submit" onclick="return confirm('Are you sure?')">Clear whole Day!</button>
+                <button class="btn btn-danger btn-lg clean-up" type="submit" onclick="return confirm('Are you sure?')">
+                    Clear whole Day!
+                </button>
             </form>
         </div>
         <div class="col-3">
@@ -258,8 +263,28 @@ height: 2.0rem;
                 </tbody>
             </table>
             <input type="submit" class="btn btn-primary my-1">
+            <br><br><br>
+            <form method="POST" action="">
+                <select class="form-control" id="prediction_choice_form", name="prediction_choice">
+                    <option label=" "></option>
+                    {% for single in all_date_records_for_chosen_date %}
+                        {% if single.breakfast%}
+                             <option value={{single.id}}>breakfast: {{single.activity_name}}</option>
+                        {% endif %}
+                        {% if single.lunch%}
+                            <option value={{single.id}}>lunch:      {{single.activity_name}}</option>
+                        {% endif %}
+                        {% if single.last_meal%}
+                            <option value={{single.id}}>last meal:  {{single.activity_name}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                  <button type="submit" class="btn btn-primary mb-2">Confirm Prediction</button>
+            </form>
         </form>
+
         <div class="col-6">
+
             <form method="POST" action="">
                 <table class="table table-hover">
                     <thead>
@@ -325,12 +350,10 @@ height: 2.0rem;
                     </tbody>
                 </table>
                 <input type="submit" class="btn btn-primary my-1">
-
-            </form>
         </div>
     </div>
     <div id="vm">
-    <p>[[ greeting ]]</p>
+        <p>[[ greeting ]]</p>
     </div>
 </div>
 
@@ -397,6 +420,9 @@ var app = new Vue({
 
 
 
+
+
+
 </script>
 
 <script>
@@ -422,6 +448,9 @@ var app = new Vue({
         }
       })
 
+
+
+
 </script>
 <script>
 const vm = new Vue({ // Again, vm is our Vue instance's name for consistency.
@@ -431,5 +460,8 @@ const vm = new Vue({ // Again, vm is our Vue instance's name for consistency.
         greeting: 'Hello, Vue!'
     }
 })
+
+
+
 </script>
 {% endblock content %}
