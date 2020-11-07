@@ -10,7 +10,7 @@ from app import engine
 from app import graphs
 from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAndDate, CreateMeal, UpdateCategory, \
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
-    LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin
+    LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin, FormPredictionGuess
 from app.helpers import *
 # from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal, Stats, User, Template
@@ -897,6 +897,7 @@ def report_new_date2(chosen_date):
     date_info = get_date_info(chosen_date)
     form_filter = FilterField()
     chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
+    form_prediction = FormPredictionGuess(chosen_date)
 
     meal_dict = Meal.json_meal()
     meal_list = Meal.list_of_meals()
@@ -919,11 +920,36 @@ def report_new_date2(chosen_date):
         return render_template('report_full_json.html', form=form_filter, activity_list=find_filtered_records,
                                type=type,
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                               done_activite_ids=done_activite_ids, meal_dict=meal_dict, today=today)
+                               done_activite_ids=done_activite_ids, meal_dict=meal_dict, today=today, form_prediction=form_prediction)
+
+
+    all_date_records_for_chosen_date = DateNew.json_full_info_by_date(chosen_date)
+
+    # if FormPredictionGuess.submit_prediction():
+    #     id_of_prediction = form_prediction.prediction.data
+    #     data_object = DateNew.find_object_by_id_and_date(id_of_prediction, chosen_date)
+    #     data_object.prediction = True
+    #     db.session.commit()
+    #     return render_template('report_full_json.html', form=form_filter,
+    #                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
+    #                            done_activite_ids=done_activite_ids, meal_dict=meal_dict,
+    #                            activity_symptoms=activity_symptoms,
+    #                            activity_meals=activity_meals, today=today,
+    #                            date_info=date_info
+    #                            , form_prediction=form_prediction
+    #                            )
+
     if request.method == 'POST':
         checkboxes_breakfast = request.form.getlist('checkbox_breakfast')
         checkboxes_lunch = request.form.getlist('checkbox_lunch')
         checkboxes_last_meal = request.form.getlist('checkbox_last_meal')
+        prediction_choice_id = request.form.get('prediction_choice')
+        if prediction_choice_id:
+            data_object = DateNew.find_by_id(prediction_choice_id)
+            print(data_object.id,' im hereeeeeeeeeeeeeeeee')
+            data_object.prediction = True
+            db.session.commit()
+            flash(f'{data_object.activity.name} is your prediction for stomach problems, we added it to database')
 
         checkboxes = [{'activity_ids': request.form.getlist('checkbox_breakfast'), 'type': 'breakfast'},
                       {'activity_ids': request.form.getlist('checkbox_lunch'), 'type': 'lunch'},
@@ -988,14 +1014,16 @@ def report_new_date2(chosen_date):
                                done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                                activity_symptoms=activity_symptoms,
                                activity_meals=activity_meals, today=today, error=error,
-                               date_info=date_info
+                               date_info=date_info, form_prediction=form_prediction,
+                               all_date_records_for_chosen_date=all_date_records_for_chosen_date
                                )
     return render_template('report_full_json.html', form=form_filter,
                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
                            done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                            activity_symptoms=activity_symptoms,
                            activity_meals=activity_meals, today=today,
-                           date_info=date_info
+                           date_info=date_info, form_prediction=form_prediction,
+                           all_date_records_for_chosen_date=all_date_records_for_chosen_date
                            )
 
 @app.route("/CV", methods=['POST', 'GET'])
