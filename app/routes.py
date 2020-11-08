@@ -504,6 +504,8 @@ def report4(choosen_date):
 
 @app.route("/", methods=['POST', 'GET'])
 def report():
+    db.create_all()
+
     today = str(date.today())
     form_choose_date = ChooseDate()
     form_choose_type_and_date = ChooseTypeAndDate()
@@ -897,7 +899,6 @@ def report_new_date2(chosen_date):
     date_info = get_date_info(chosen_date)
     form_filter = FilterField()
     chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
-    form_prediction = FormPredictionGuess(chosen_date)
 
     meal_dict = Meal.json_meal()
     meal_list = Meal.list_of_meals()
