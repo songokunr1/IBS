@@ -921,7 +921,7 @@ def report_new_date2(chosen_date):
         return render_template('report_full_json.html', form=form_filter, activity_list=find_filtered_records,
                                type=type,
                                chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                               done_activite_ids=done_activite_ids, meal_dict=meal_dict, today=today, form_prediction=form_prediction)
+                               done_activite_ids=done_activite_ids, meal_dict=meal_dict, today=today)
 
 
     all_date_records_for_chosen_date = DateNew.json_full_info_by_date(chosen_date)
@@ -1015,7 +1015,7 @@ def report_new_date2(chosen_date):
                                done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                                activity_symptoms=activity_symptoms,
                                activity_meals=activity_meals, today=today, error=error,
-                               date_info=date_info, form_prediction=form_prediction,
+                               date_info=date_info,
                                all_date_records_for_chosen_date=all_date_records_for_chosen_date
                                )
     return render_template('report_full_json.html', form=form_filter,
@@ -1023,7 +1023,7 @@ def report_new_date2(chosen_date):
                            done_activite_ids=done_activite_ids, meal_dict=meal_dict,
                            activity_symptoms=activity_symptoms,
                            activity_meals=activity_meals, today=today,
-                           date_info=date_info, form_prediction=form_prediction,
+                           date_info=date_info,
                            all_date_records_for_chosen_date=all_date_records_for_chosen_date
                            )
 
