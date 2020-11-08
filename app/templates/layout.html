@@ -51,7 +51,7 @@
                 <li class="header">Main functionality</li>
                 <li>
                     <a href="{{url_for('add')}}">
-                        <i class="fa fa-users" aria-hidden="true"></i> Add records
+                        <i class="fa fa-users" aria-hidden="true"></i> Add record
                     </a>
                 </li>
                 <li>
@@ -61,7 +61,7 @@
                 </li>
                 <li>
                     <a href="{{url_for('delete')}}">
-                        <i class="fa fa-info-circle" aria-hidden="true"></i> Remove a records
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Remove a record
                     </a>
                 </li>
                 <li>
@@ -106,6 +106,8 @@
     </div>
     <div class="row"></div>
     <div class="col-md-10">
+        <br>
+<br>
         {% block content %}{% endblock %}
     </div>
 </div>
@@ -128,6 +130,7 @@
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
 <script type=text/javascript src="{{
   url_for('static', filename='js/navbar.js') }}"></script>
+
 
 {% block scripts %}
 
