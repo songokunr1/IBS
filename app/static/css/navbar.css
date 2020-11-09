@@ -1,6 +1,6 @@
 .sidebar-container {
   position: fixed;
-  width: 160px;
+  width: 100px;
   height: 60%;
   left: 0;
   overflow-x: hidden;
@@ -11,12 +11,12 @@
 }
 
 .content-container {
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .sidebar-logo {
-  padding: 10px 15px 10px 30px;
-  font-size: 20px;
+  padding: 4px 10px 5px 20px;
+  font-size: 12px;
   background-color: #008B8B;
 }
 
@@ -32,17 +32,17 @@
   position: relative;
   display: inline-block;
   width: 100%;
-  line-height: 20px;
+  line-height: 15px;
 }
 
 .sidebar-navigation li a {
-  padding: 10px 15px 10px 30px;
+  padding: 10px 6px 6px 5px;
   display: block;
   color: #fff;
 }
 
 .sidebar-navigation li .fa {
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .sidebar-navigation li a:active,
@@ -59,9 +59,9 @@
   height: 100%;
   left: 0;
   top: 0;
-  -webkit-transition: width 0.2s ease-in;
-  transition: width 0.2s ease-in;
-  width: 3px;
+  -webkit-transition: width 0.4s ease-in;
+  transition: width 0.4s ease-in;
+  width: 4px;
   z-index: -1;
 }
 
@@ -73,7 +73,7 @@
   font-size: 12px;
   text-transform: uppercase;
   background-color: #151515;
-  padding: 10px 15px 10px 30px;
+  padding: 10px 15px 10px 10px;
 }
 
 .sidebar-navigation .header::before {
@@ -81,7 +81,7 @@
 }
 
 .content-container {
-  padding-left: 220px;
+  padding-left: 80px;
 }
 
 #wrapper.toggled {
@@ -110,10 +110,10 @@
   }
   #page-content-wrapper {
     padding: 20px;
-    position: relative;
+    position: static;
   }
   #wrapper.toggled #page-content-wrapper {
-    position: relative;
-    margin-right: 0;
+    position: static;
+    margin-right: 20;
   }
 }
