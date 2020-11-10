@@ -29,12 +29,11 @@ height: 2.0rem;
         {%if erorr%}
         {{erorr}}
         {% endif %}
-        <div class="col-5"><h1>
+        <div class="col-4"><h1>
             <a role="button" class="btn btn-primary btn-lg"
                href="{{url_for('report_new_date2', chosen_date=date_info['previous'])}}">&laquo; Previous day</a>
-
         </h1></div>
-        <div class="col-4">
+        <div class="col-5">
             <form method="post" action="{{ url_for('remove_whole_day', chosen_date=chosen_date) }}">
                 <button class="btn btn-danger btn-lg clean-up" type="submit" onclick="return confirm('Are you sure?')">
                     Clear whole Day!
