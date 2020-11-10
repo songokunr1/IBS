@@ -12,7 +12,6 @@ from app.forms import DateActivityReport, ChooseDate, FilterField, ChooseTypeAnd
     UpdateActivity, AddActivity, AddCategory, DeleteActivity, DeleteCategory, ChooseDateNewReport, DeleteMeal, \
     LoginForm, RegistrationForm, GetNameForBackupForm, FormGuestLogin
 from app.helpers import *
-# from app.forms import New_category, New_habit, Building_habit, Delete_habit, DateHabitReport
 from app.models import Category, Activity, Date, DateNew, Meal, Stats, User, Template
 from app.resources import CategoryResource
 
@@ -405,21 +404,6 @@ def init_date_today():
     return render_template('habit.html')
 
 
-# @app.route("/report", methods=['POST', 'GET', 'DELETE'])
-# def report():
-#     form_done = DateActivityReport()
-#     choosen_date = date.today()
-#     all_category = Category.query.all()
-#     if form_done.validate_on_submit():
-#         choosen_date = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date='2020-05-29')
-#         choosen_date.done = True
-#         db.session.commit()
-#         flash('Your update has been created!', 'success')
-#         return redirect(url_for('report', form_done=form_done, all_category=all_category))
-#     return render_template('report.html',
-#                            form_done=form_done, date_object=Date, all_category=all_category, Date=Date,
-#                            Activity=Activity, Category=Category, choosen_date=choosen_date)
-
 @app.route("/report/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
 def report3(choosen_date):
     form_done = DateActivityReport()
@@ -464,13 +448,9 @@ def report3(choosen_date):
                            Activity=Activity, Category=Category, choosen_date=choosen_date)
 
 
-@app.route("/report_new/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
-def report_new(choosen_date):
-    form = ChooseMultiple()
-    print(Activity.filer_activity_objects('eko'))
-    if form.validate_on_submit():
-        print(form.language.data)
-    return render_template('report_new.html', form=form)
+
+    #TODO List of intresting points
+    # Activity.filer_activity_objects('eko')
 
 
 @app.route("/reportvue/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
