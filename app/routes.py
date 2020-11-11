@@ -389,122 +389,28 @@ def init_activity():
     return render_template('habit.html')
 
 
-@app.route("/today")
-def init_date_today():
-    print(type(date.today()))
-    for single_object in Activity.list_of_activity_objects():
-        # TODO if not working with empty databasee
-        try:
-            Date.find_date_by_activity_id_and_date(_id=single_object.id, date=str(date.today()))[0]
-        except IndexError as e:
-            new_record = Date(date=date.today(), done=False, activity_id=single_object.id,
-                              category_id=single_object.category_id)
-            Date.save_to_db(new_record)
-            flash('Your update has been created!', 'success')
-    return render_template('habit.html')
-
-
-@app.route("/report/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
-def report3(choosen_date):
-    form_done = DateActivityReport()
-    all_category = Category.query.all()
-    for single_object in Activity.list_of_activity_objects():
-        try:
-            print(single_object.name)
-            Date.find_date_by_activity_id_and_date(_id=single_object.id, date=choosen_date)[0]
-        except IndexError as e:
-            print(single_object.name, 'added')
-            new_record = Date(date=choosen_date, done=False, activity_id=single_object.id,
-                              category_id=single_object.category_id)
-            Date.save_to_db(new_record)
-            flash('Your update has been created!', 'success')
-    for single_category in all_category:
-        # print(single_category.category)
-        date_object = Date.find_date_by_category_id_and_date(single_category.id, choosen_date)
-        # for single in date_object:
-        #     print(single.activity.name)
-    if request.method == 'POST':
-        post_data = request.form.getlist('mycheckbox')
-        post_date = request.form.get('choosen_date')
-        print(post_date, post_data)
-        for id in post_data:
-            print(post_date, 'post date czy okej?')
-            today = Date.find_date_by_date_id_and_date(_id=int(id), date=post_date)
-            today.done = True
-            db.session.commit()
-            print(id, today.id)
-            flash('Your update has been created!', 'success')
-        return redirect(url_for('report3', form_done=form_done, date_object=date_object, all_category=all_category,
-                                choosen_date=choosen_date))
-    if form_done.validate_on_submit():
-        today = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date=choosen_date)
-        today.done = True
-        db.session.commit()
-        flash('Your update has been created!', 'success')
-        return redirect(url_for('report', form_done=form_done, date_object=date_object, all_category=all_category,
-                                choosen_date=choosen_date))
-    return render_template('report.html',
-                           form_done=form_done, date_object=date_object, all_category=all_category, Date=Date,
-                           Activity=Activity, Category=Category, choosen_date=choosen_date)
-
-
 
     #TODO List of intresting points
     # Activity.filer_activity_objects('eko')
+    # if request.method == 'POST':
+    #     post_data = request.form.getlist('mycheckbox')
+    #     post_date = request.form.get('choosen_date')
 
-
-@app.route("/reportvue/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
-def report4(choosen_date):
-    form_done = DateActivityReport()
-    all_category = Category.query.all()
-    for single_object in Activity.list_of_activity_objects():
-        try:
-            Date.find_date_by_activity_id_and_date(_id=single_object.id, date=str(date.today()))[0]
-        except IndexError as e:
-            new_record = Date(date=date.today(), done=False, activity_id=single_object.id,
-                              category_id=single_object.category_id)
-            Date.save_to_db(new_record)
-            flash('Your update has been created!', 'success')
-    for single_category in all_category:
-        print(single_category.category)
-        date_object = Date.find_date_by_category_id_and_date(single_category.id, choosen_date)
-        for single in date_object:
-            print(single.activity.name)
-    if form_done.validate_on_submit():
-        today = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date=choosen_date)
-        today.done = True
-        db.session.commit()
-        flash('Your update has been created!', 'success')
-        return redirect(url_for('report', form_done=form_done, date_object=date_object, all_category=all_category,
-                                choosen_date=choosen_date))
-    return render_template('report2.html',
-                           form_done=form_done, date_object=date_object, all_category=all_category, Date=Date,
-                           Activity=Activity, Category=Category, choosen_date=choosen_date)
+    #TODO
+    # create new application where you can experiment with vue, requests, charts?
+    # could be copy of this application -> with copy of this database it will be like -> development -> applaying it into
+    # or maybe start to use different eviroment to test? and branch out changes instead of pushing it all the time to master
 
 
 @app.route("/", methods=['POST', 'GET'])
 def report():
     db.create_all()
-
     today = str(date.today())
-    form_choose_date = ChooseDate()
-    form_choose_type_and_date = ChooseTypeAndDate()
     new_report_form = ChooseDateNewReport()
-    print(form_choose_date.validate_on_submit)
-    print(form_choose_type_and_date.submit_type_and_date)
-    if form_choose_type_and_date.validate_on_submit():
-        date_to_show = form_choose_type_and_date.date_report.data
-        type_choice = form_choose_type_and_date.type_of_report.data
-        return redirect(url_for('report_new_date', type=type_choice, chosen_date=date_to_show))
     if new_report_form.validate_on_submit():
         date_to_show = new_report_form.date_report.data
         return redirect(url_for('report_new_date2', chosen_date=date_to_show))
-    if form_choose_date.validate_on_submit():
-        date_to_show = form_choose_date.date_report.data
-        return redirect(url_for('report3', choosen_date=date_to_show))
-    return render_template('report_base.html',
-                           form_choose_date=form_choose_date, today=today,
-                           form_choose_type_and_date=form_choose_type_and_date,
+    return render_template('report_base.html', today=today,
                            new_report_form=new_report_form)
 
 
@@ -1137,7 +1043,6 @@ def register():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('report'))
-    print(current_user.is_authenticated)
     form = LoginForm()
     form_guest = FormGuestLogin()
     if form_guest.validate_on_submit() and form_guest.click_here_to_test_as_guest.data:
