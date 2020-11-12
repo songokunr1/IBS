@@ -14,31 +14,16 @@
             <form method="POST" action="">
                 <fieldset>
                     <div class="form-group text-center ">
-                        {{form_choose_date.date_report(value=today)}}
+                        {{new_report_form.date_report(value=today)}}
                     </div>
                 </fieldset>
-                    {{form_choose_date.submit_date(class="form-control btn btn-danger text-center btn-block btn-lg")}}
-                    <!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
+                {{new_report_form.submit_date_new_report(class="form-control btn btn-danger text-center btn-block
+                btn-lg")}}
+                <!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
             </form>
         </div>
     </div>
 
-
-    <!--    <div class="col-5 alert alert-info text-center" role="alert"><h2>Create New Daily Report v2.0</h2></div>-->
-    <!--    <form method="POST" action="">-->
-    <!--        <fieldset>-->
-    <!--            <div class="form-group">-->
-    <!--                {{new_report_form.date_report(value=today)}}-->
-    <!--            </div>-->
-    <!--            <div class="forms errors">-->
-    <!--                {{new_report_form.errors}}-->
-    <!--            </div>-->
-    <!--        </fieldset>-->
-    <!--        <div class="col-4 form-group">-->
-    <!--            {{new_report_form.submit_date_new_report(class="form-control")}}-->
-    <!--        </div>-->
-    <!--    </form>-->
-    <!--</div>-->
 </div>
 <!--<button class="change"> Click me.</button>-->
 
