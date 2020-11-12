@@ -505,10 +505,9 @@ def create_meal():
         except AttributeError as e:
             new_meal = Meal(ingredients=ingredients['string_of_ingridients_ids'], name=meal_name)
             Meal.save_to_db(new_meal)
-            print(f'we added {new_meal.name} to the menu')
-            print(new_meal.name)
+            flash(f'we added {new_meal.name} to the menu')
             return render_template('meal.html', form_create_meal=form_create_meal, ingredients=ingredients,
-                                   meal_name=meal_name, added=True)
+                                   meal_name=meal_name)
     return render_template('meal.html',
                            form_create_meal=form_create_meal)
 
@@ -958,3 +957,4 @@ def restore_structure_of_db():
         db.session.add(new_activity)
         db.session.commit()
     return redirect(url_for('backup_structure_of_db'))
+    # form chose from list and apply to db
