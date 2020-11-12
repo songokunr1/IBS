@@ -389,19 +389,6 @@ def init_activity():
     return render_template('habit.html')
 
 
-
-    #TODO List of intresting points
-    # Activity.filer_activity_objects('eko')
-    # if request.method == 'POST':
-    #     post_data = request.form.getlist('mycheckbox')
-    #     post_date = request.form.get('choosen_date')
-
-    #TODO
-    # create new application where you can experiment with vue, requests, charts?
-    # could be copy of this application -> with copy of this database it will be like -> development -> applaying it into
-    # or maybe start to use different eviroment to test? and branch out changes instead of pushing it all the time to master
-
-
 @app.route("/", methods=['POST', 'GET'])
 def report():
     db.create_all()
@@ -412,35 +399,6 @@ def report():
         return redirect(url_for('report_new_date2', chosen_date=date_to_show))
     return render_template('report_base.html', today=today,
                            new_report_form=new_report_form)
-
-
-@app.route("/reportvuefinal/<choosen_date>", methods=['POST', 'GET', 'DELETE'])
-def reportvue(choosen_date):
-    form_done = DateActivityReport()
-    all_category = Category.query.all()
-    response_object = {'status': 'success'}
-    if request.method == 'POST':
-        post_data = request.get_json()
-    for single_object in Activity.list_of_activity_objects():
-        try:
-            Date.find_date_by_activity_id_and_date(_id=single_object.id, date=str(date.today()))[0]
-        except IndexError as e:
-            new_record = Date(date=date.today(), done=False, activity_id=single_object.id,
-                              category_id=single_object.category_id)
-            Date.save_to_db(new_record)
-            flash('Your update has been created!', 'success')
-    for single_category in all_category:
-        date_object = Date.find_date_by_category_id_and_date(single_category.id, choosen_date)
-    if form_done.validate_on_submit():
-        today = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date=choosen_date)
-        today.done = True
-        db.session.commit()
-        flash('Your update has been created!', 'success')
-        return redirect(url_for('report', form_done=form_done, date_object=date_object, all_category=all_category,
-                                choosen_date=choosen_date))
-    return render_template('reportvue.html',
-                           form_done=form_done, date_object=date_object, all_category=all_category, Date=Date,
-                           Activity=Activity, Category=Category, choosen_date=choosen_date)
 
 
 @app.route("/todos", methods=['GET'])
@@ -462,26 +420,6 @@ def jsonserver():
     return jsonify(todos)
 
 
-@app.route("/todos2", methods=['GET'])
-def jsonserver2():
-    todos = [
-        {
-            "id": 3,
-            "name": "todos2"
-        },
-        {
-            "id": 4,
-            "name": "todos2 ohh yea"
-        },
-        {
-            "id": 5,
-            "name": "todos2 ohh yea"
-        }
-    ]
-    print(todos)
-    return jsonify(todos)
-
-
 @app.route("/todos3", methods=['POST'])
 def jsonserver3():
     post_data = request.args.get('name')
@@ -489,20 +427,10 @@ def jsonserver3():
     return jsonify(post_data)
 
 
-@app.route("/todos4", methods=['GET'])
-def jsonserver4():
-    get = Meal.json_meal()
-    return jsonify(get)
-
-
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
-
-@app.route('/posilki', methods=['GET'])
-def posilki():
-    return jsonify('pong!')
 
 
 @app.route("/api/records", methods=['GET'])
@@ -527,110 +455,31 @@ def jsongetactivities():
     })
 
 
-@app.route("/report_new_vue", methods=['POST', 'GET', 'DELETE'])
-def report_new_vue():
-    form_filter = FilterField()
-    activity_list = Activity.list_of_activity_objects()
-    if form_filter.validate_on_submit():
-        # filter = request.get_json(force=True)
-        filter = form_filter.filter.data
-        find_filtered_records = Activity.filer_activity_objects(filter)
-        print(find_filtered_records)
-        return render_template('report_new_vue.html', form=form_filter, activity_list=find_filtered_records)
-    # if form_done.validate_on_submit():
-    #     today = Date.find_date_by_date_id_and_date(_id=form_done.date_id.data, date=choosen_date)
-    #     today.done = True
-    #     db.session.commit()
-    #     flash('Your update has been created!', 'success')
-    #     return redirect(url_for('report', form_done=form_done, date_object=date_object, all_category=all_category,
-    #                             choosen_date=choosen_date))
-    return render_template('report_new_vue.html', form=form_filter, activity_list=activity_list)
+    #TODO List of intresting points
+    # Activity.filer_activity_objects('eko')
+    # if request.method == 'POST':
+    #     post_data = request.form.getlist('mycheckbox')
+    #     post_date = request.form.get('choosen_date')
+    # meal_ids = request.form.getlist('mycheckbox2')
+    #         post_data = request.get_json()
+    #
+    # if request.method == 'POST':
+    #    post_data = request.get_json()
+    #    activity_ids = request.form.getlist('mycheckbox')
+    # if form_filter.validate_on_submit():
+    #     # filter = request.get_json(force=True)
+    #     filter = form_filter.filter.data
+    #     find_filtered_records = Activity.filer_activity_objects(filter)
+    #
+    # activity_symptoms = sorted(Activity.json_symptoms(), key=lambda k: k['category_id'])
+    # activity_meals = sorted(Activity.json_meals(), key=lambda k: k['category_id'])
 
 
-@app.route("/activity_list/<filter_string>", methods=['GET', 'POST'])
-def activity_list(filter_string):
-    print('asdf')
-    activity_list = Activity.list_of_activity_objects()
-    data_to_convert = [{'name': i.name, 'id': i.id} for i in activity_list]
-    activity_json = json.dumps(data_to_convert, ensure_ascii=False).encode('utf8')
-    print(activity_json)
-    if request.method == 'POST':
-        print('jestem w innej roucie!')
-        # post_data = request.get_json(force=True)
-        # print(post_data)
-        return redirect(url_for('report_new_vue'))
-    return activity_json
 
-
-@app.route("/report_new_vue1", methods=['POST', 'GET', 'DELETE'])
-def report_new_vue1():
-    return render_template('report_new_vue0.html')
-
-
-@app.route("/report/<type>/<chosen_date>", methods=['POST', 'GET'])
-@login_required
-def report_new_date(type, chosen_date):
-    form_filter = FilterField()
-    full_activity_list = Activity.list_of_activity_objects()
-    chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
-    type_true_or_false = {single: (True if single == type else False) for single in
-                          ['breakfast', 'lunch', 'last_meal', 'morning', 'night']}
-    act_json = Activity.json_all()
-    meal_dict = Meal.json_meal()
-    meal_list = Meal.list_of_meals()
-    activity_symptoms = sorted(Activity.json_symptoms(), key=lambda k: k['category_id'])
-    activity_meals = sorted(Activity.json_meals(), key=lambda k: k['category_id'])
-
-    if type in ['breakfast', 'lunch', 'last_meal']:
-        activity_list = activity_meals
-    if type in ['morning', 'night']:
-        activity_list = activity_symptoms
-    print(activity_list)
-    # print([(single['id'], single['category_name']) for single in activity_symptoms])
-
-    # [single['name'] for single in act_json if single['category']]
-
-    if type in ['breakfast', 'lunch', 'last_meal', 'morning', 'night']:
-        done_activite_ids = [single.activity_id for single in
-                             DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
-        if form_filter.validate_on_submit():
-            # filter = request.get_json(force=True)
-            filter = form_filter.filter.data
-            find_filtered_records = Activity.filer_activity_objects(filter)
-            # print(find_filtered_records)
-            return render_template('report_new_json.html', form=form_filter, activity_list=find_filtered_records,
-                                   type=type,
-                                   chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                                   done_activite_ids=done_activite_ids, meal_dict=meal_dict)
-        if request.method == 'POST':
-            print('jestem w innej roucie!')
-            activity_ids = request.form.getlist('mycheckbox')
-            if not activity_ids:
-                print('robie finnal!')
-                meal_ids = request.form.getlist('mycheckbox2')
-                list_activity_from_meal = Meal.get_list_of_activities(meal_ids)
-                print(list_activity_from_meal, 'blablabl')
-            for activity_id in list_activity_from_meal:
-                category_id = Category.find_by_id(Activity.find_by_id(activity_id).category_id).id
-                today = DateNew(date=chosen_date, **type_true_or_false, category_id=category_id,
-                                activity_id=activity_id, username_id=current_user.id)
-                DateNew.save_to_db(today)
-                flash('Your update has been created!', 'success')
-                done_activite_ids = [single.activity_id for single in
-                                     DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
-
-            return render_template('report_new_json.html', form=form_filter, activity_list=activity_list, type=type,
-                                   chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                                   done_activite_ids=done_activite_ids, meal_list=meal_list, meal_dict=meal_dict,
-                                   activity_symptoms=activity_symptoms, activity_meals=activity_meals)
-
-        return render_template('report_new_json.html', type=type, form=form_filter, activity_list=activity_list,
-                               chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-                               done_activite_ids=done_activite_ids, meal_dict=meal_dict,
-                               activity_symptoms=activity_symptoms,
-                               activity_meals=activity_meals,
-                               )
-    return '<h1>na spokjnie</h1>'
+    #TODO
+    # create new application where you can experiment with vue, requests, charts?
+    # could be copy of this application -> with copy of this database it will be like -> development -> applaying it into
+    # or maybe start to use different eviroment to test? and branch out changes instead of pushing it all the time to master
 
 
 @app.route("/create_meal", methods=['POST', 'GET'])
@@ -1109,4 +958,3 @@ def restore_structure_of_db():
         db.session.add(new_activity)
         db.session.commit()
     return redirect(url_for('backup_structure_of_db'))
-    # form chose from list and apply to db
