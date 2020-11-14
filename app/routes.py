@@ -550,34 +550,23 @@ def add():
     form_activity = AddActivity()
     all_cat = Category.json_all()
 
-    print(form_category.validate_on_submit())
-    print(form_activity.submit_new_activity.data)
-    print(form_category.submit_new_category.data)
-    print(form_activity.validate_on_submit())
     if form_category.validate_on_submit() and form_category.submit_new_category.data:
         a_category = Category(category=form_category.category_name.data, username_id=current_user.id)
         Category.save_to_db(a_category)
         # print(f'well done, we changed {form_category.name} into {form_category.category_name.data}')
-        print('we have change it')
         return render_template('add.html',
                                form_activity=form_activity, form_category=form_category)
     if form_activity.validate_on_submit() and form_activity.submit_new_activity.data:
-        print('im here')
         try:
-            print('1')
-            print(Activity.find_by_name(form_activity.activity_name.data).name)
-            print('2')
             return render_template('add.html',
                                    form_activity=form_activity, form_category=form_category, added_activity=True)
         except:
-            print('except')
-            print(form_activity.activity_name.data, "form_activity.activity_name.data")
             a_activity = Activity(name=form_activity.activity_name.data, category_id=form_activity.category_id.data,
                                   username_id=current_user.id)
             # if form_activity.box.data:
             #     a_activity.category_id = form_activity.activity_category_id.data
             Activity.save_to_db(a_activity)
-            print(f'well done, we added {form_activity.activity_name.data}')
+            flash(f'well done, we added {form_activity.activity_name.data}')
 
         return render_template('add.html',
                                form_activity=form_activity, form_category=form_category, added_activity=True)
@@ -602,15 +591,10 @@ def delete():
         return render_template('delete.html',
                                form_activity=form_activity, form_category=form_category, form_meal=form_meal)
     if form_activity.validate_on_submit() and form_activity.submit_delete_activity.data:
-        print('im here in activity form')
         try:
             a_activity = Activity.find_by_id(form_activity.activity_id.data)
-            print(form_activity.activity_id.data)
-            print(a_activity)
         except:
-            print('except, we could delete activity')
-            #     a_activity.category_id = form_activity.activity_category_id.data
-            print(f'well done, we added {form_activity.activity_id.data}')
+            flash(f'well done, we added {form_activity.activity_id.data}')
         Activity.delete_from_db(a_activity)
         print(f'Successful deleted category')
         return render_template('delete.html',
@@ -635,16 +619,13 @@ def report_new_date2(chosen_date):
     chosen_date_objects = DateNew.find_activitys_by_date(chosen_date)
 
     meal_dict = Meal.json_meal()
-    meal_list = Meal.list_of_meals()
     activity_symptoms = sorted(Activity.json_symptoms(), key=lambda k: k['category_id'])
     activity_meals = sorted(Activity.json_meals(), key=lambda k: k['category_id'])
 
     type_true_or_false = {single: (True if single == 'breakfast' else False) for single in
                           ['breakfast', 'lunch', 'last_meal', 'morning', 'night']}
     today = DateNew.json_dict_list_of_done_activies_by_date(chosen_date)
-    print(today)
-    # print(type_true_or_false)
-    # print(DateNew.find_activitys_by_date_id_and_type(chosen_date, _id=20, **type_true_or_false))
+
 
     done_activite_ids = [single.activity_id for single in
                          DateNew.find_activitys_by_date_and_type(chosen_date, **type_true_or_false)]
@@ -660,19 +641,6 @@ def report_new_date2(chosen_date):
 
     all_date_records_for_chosen_date = DateNew.json_full_info_by_date(chosen_date)
 
-    # if FormPredictionGuess.submit_prediction():
-    #     id_of_prediction = form_prediction.prediction.data
-    #     data_object = DateNew.find_object_by_id_and_date(id_of_prediction, chosen_date)
-    #     data_object.prediction = True
-    #     db.session.commit()
-    #     return render_template('report_full_json.html', form=form_filter,
-    #                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
-    #                            done_activite_ids=done_activite_ids, meal_dict=meal_dict,
-    #                            activity_symptoms=activity_symptoms,
-    #                            activity_meals=activity_meals, today=today,
-    #                            date_info=date_info
-    #                            , form_prediction=form_prediction
-    #                            )
 
     if request.method == 'POST':
         checkboxes_breakfast = request.form.getlist('checkbox_breakfast')
@@ -722,8 +690,7 @@ def report_new_date2(chosen_date):
                                     activity_id=activity_id, username_id=current_user.id)
                     DateNew.save_to_db(today)
                     flash('Looks like you added new records into database!')
-        print(type_checkbox['type'])
-        print(type_checkbox['activity_ids'])
+
 
         if type_checkbox['type'] == 'meal':
             list_time_of_meal = request.form.getlist('meal_time')
@@ -776,29 +743,6 @@ def CV_count():
     return redirect(url_for('report'))
 
 
-@app.route("/CV2", methods=['POST', 'GET'])
-def CV_count2():
-    # db.create_all()
-    today = str(dt.datetime.now())[:9] + '4'
-    ip_address = request.remote_addr
-    access_token = 'a2f936dd1cc48c'
-    print(ip_address)
-    handler = ipinfo.getHandler(access_token)
-    details_info = handler.getDetails(ip_address)
-    new = Stats(ip=details_info.ip, location=details_info.city, date=today, country=details_info.country)
-    Stats.save_to_db(new)
-
-    return jsonify({'ip': details_info.ip,
-                    'country': details_info.country,
-                    'location': details_info.city})
-
-
-@app.route("/show_stats", methods=['POST', 'GET'])
-def show_stats():
-    response = jsonify(Stats.data_json())
-    return response
-
-
 @app.route("/json/date", methods=['GET'])
 def get_date():
     return jsonify(DateNew.json_date())
@@ -818,9 +762,6 @@ def get_category():
 @login_required
 def remove_whole_day(chosen_date):
     DateNew.delete_activitys_by_date(chosen_date)
-    # chosen_date_objects = DateNew.query.filter(DateNew.date == chosen_date)
-    # or User.query.filter(DateNew.date == chosen_date).delete() ! powerful
-    # chosen_date_objects.delete()
     db.session.commit()
     return redirect(url_for('report_new_date2', chosen_date=chosen_date))
 
@@ -929,7 +870,6 @@ def backup_structure_of_db():
     form = GetNameForBackupForm()
     if form.validate_on_submit():
         all_records = Activity.json_all()
-        print(form.backup_name)
         Template.create_new_record_from_template(name=form.backup_name.data, instances=all_records)
         return redirect(url_for('backup_structure_of_db'))
     return render_template('backup.html', form=form)
@@ -940,14 +880,8 @@ def restore_structure_of_db():
     full_backup_to_restore = Template.find_by_name('full_Ewa').json_template['instances']
     Activity.delete_all_objects_by_current_user()
     Category.delete_all_objects_by_current_user()
-    # new_category = Category(category='gluten', username_id=current_user.id)
-    # db.session.add(new_category)
-    # db.session.commit()
     for single_record in full_backup_to_restore:
-        print(Category.find_by_name(single_record['category']))
-        print(not Category.find_by_name(single_record['category']))
         if not Category.find_by_name(single_record['category']):
-            print(single_record['category'])
             new_category = Category(category=single_record['category'], username_id=current_user.id)
             db.session.add(new_category)
             db.session.commit()
@@ -957,4 +891,3 @@ def restore_structure_of_db():
         db.session.add(new_activity)
         db.session.commit()
     return redirect(url_for('backup_structure_of_db'))
-    # form chose from list and apply to db
