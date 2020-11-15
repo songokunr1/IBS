@@ -1,10 +1,6 @@
-//$("#menu-toggle").click(function(e) {
-//  e.preventDefault();
-//  $("#wrapper").toggleClass("toggled");
-//alert("Hello! I am an alert box!!");   background-color: #2574A9;
-const toggle = document.getElementById("menu-toggle")
-const myNode = document.getElementById("wrapper");
-const el = myNode.innerHTML
+var toggle = document.getElementById("menu-toggle")
+var myNode = document.getElementById("wrapper");
+var el = myNode.innerHTML
 console.log(toggle)
 toggle.onclick = () => {
   if (myNode.hasChildNodes()) {
@@ -13,3 +9,14 @@ toggle.onclick = () => {
   myNode.innerHTML = el;
   }
 }
+
+
+
+var alarms = document.querySelectorAll('.alert');
+var i;
+setTimeout(function(){
+for (i = 0; i < alarms.length; i++) {
+  alarms[i].remove();}
+}, 3000);
+
+
