@@ -60,7 +60,6 @@ category_init = [
     {
         'category': 'owoce',
     },
-
 ]
 
 activity_init = [
@@ -394,11 +393,16 @@ def report():
     db.create_all()
     today = str(date.today())
     new_report_form = ChooseDateNewReport()
+    try:
+        User.query.get(current_user.id)
+        image_file = url_for('static', filename='icon/' + current_user.image_file)
+    except:
+        image_file = None
     if new_report_form.validate_on_submit():
         date_to_show = new_report_form.date_report.data
         return redirect(url_for('report_new_date2', chosen_date=date_to_show))
     return render_template('report_base.html', today=today,
-                           new_report_form=new_report_form)
+                           new_report_form=new_report_form, image_file=image_file)
 
 
 @app.route("/todos", methods=['GET'])
@@ -862,7 +866,14 @@ def logout():
 @login_required
 def account():
     db.create_all()
-    return render_template('account.html')
+    # new = 'atomowka.png'
+    # user = User.query.filter_by(id=2).first()
+    # user.image_file = new
+    # db.session.commit()
+
+    image_file = url_for('static', filename='icon/' + current_user.image_file)
+
+    return render_template('account.html', image_file=image_file)
 
 
 @app.route("/db/backup", methods=['GET', 'POST'])
