@@ -1,31 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
-    <br><br><br>
-    <div class="row ">
-        <div class="col-2"></div>
+<br><br><br>
+<div class="row ">
 
-        <div class=" col-6 alert-info text-center
+    <div class=" col-6 alert-info text-center
         " role=""><h1 class="font-weight-bold">Create Daily Report</h1></div>
-        <br>
+    <br>
+</div>
+<div class="row ">
+    <div class="col-6">
+        <form method="POST" action="">
+            <fieldset>
+                <div class="form-group text-center ">
+                    <br>
+                    {{new_report_form.date_report(value=today)}}
+                </div>
+            </fieldset>
+            {{new_report_form.submit_date_new_report(class="form-control btn btn-danger text-center btn-block
+            btn-lg")}}
+            <!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
+        </form>
     </div>
-    <div class="row ">
-        <div class="col-2"></div>
-        <div class="col-6">
-            <form method="POST" action="">
-                <fieldset>
-                    <div class="form-group text-center ">
-                        <br>
-                        {{new_report_form.date_report(value=today)}}
-                    </div>
-                </fieldset>
-                {{new_report_form.submit_date_new_report(class="form-control btn btn-danger text-center btn-block
-                btn-lg")}}
-                <!--            <input type="submit" name="submit1" value="Just submit About You subform">-->
-            </form>
-        </div>
-    </div>
-
 </div>
 <!--<button class="change"> Click me.</button>-->
 
