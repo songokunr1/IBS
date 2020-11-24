@@ -1,10 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
     <div class="col-8">
     <form method="POST" action="">
         <fieldset>
-            <table class="table table-hover alert alert-primary" role="alert">
+            <table class="table table-hover alert-primary" role="alert">
                 <thead>
                 <tr>
                     <th scope="col">name of meal</th>
@@ -23,7 +22,7 @@
                  <div class="col-3">{{form_create_meal.warzywa_ingredients (class="form-control form-control-lg", size=6)}}</div>
             </div>
 
-            <div class="alert alert-primary col-2"> All meals:</div>
+            <div class="alert-primary col-2"> All meals:</div>
             <div class="col-5 ">{{form_create_meal.ingredients (class="form-control form-control-lg", size=6,
             id="exampleFormControlSelect2")}}
 
@@ -46,5 +45,5 @@
         {% endif %}
     </div>
 </div>
-</div>
+
 {% endblock content %}
