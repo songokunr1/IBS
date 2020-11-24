@@ -8,6 +8,18 @@
   background: #1a1a1a;
   color: #fff;
   border-radius: 15px;
+  z-index: 100;
+}
+
+.sidebar-container-menu {
+  position: fixed;
+  width: 100px;
+  height: 33px;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 15px;
+  z-index: 100;
 }
 
 .content-container {
