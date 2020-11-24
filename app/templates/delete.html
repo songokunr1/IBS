@@ -6,9 +6,9 @@
     </div>
     <form method="POST" action="">
         <fieldset>
-            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete Category</h1>
+            <div class="col-3 alert-danger font-weight-bold text-center" role="alert"><h1>Delete Category</h1>
             </div>
-            <div class="col-2 alert alert-info text-center">category name:</div>
+            <div class="col-2 alert-info text-center">category name:</div>
 
             {{form_category.category_id (class="col-2 form-control form-control-lg", size=6 )}}
             <div class="forms errors">
@@ -25,9 +25,9 @@
 
     <form method="POST" action="">
         <fieldset>
-            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete Activity</h1>
+            <div class="col-3 alert-danger font-weight-bold text-center" role="alert"><h1>Delete Activity</h1>
             </div>
-            <div class="col-2 alert alert-info text-center">which category?  </div>
+            <div class="col-2 alert-info text-center">which category?  </div>
             {{form_activity.activity_id (class="col-2 form-control form-control-lg", size=6 )}}
             {{form_activity.box}}
             <div class="forms errors">
@@ -43,10 +43,9 @@
     <br>
     <form method="POST" action="">
         <fieldset>
-            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Delete meal</h1>
+            <div class="col-3 alert-danger font-weight-bold text-center" role="alert"><h1>Delete meal</h1>
             </div>
-            <div class="col-2 alert alert-info text-center">meal name:</div>
-
+            <div class="col-2 alert-info text-center">meal name:</div>
             {{form_meal.meal_id (class="col-2 form-control form-control-lg", size=6 )}}
             <div class="forms errors">
                 {{form_meal.errors}}
