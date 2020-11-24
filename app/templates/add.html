@@ -1,57 +1,55 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-2"></div>
-    </div>
-    <form method="POST" action="">
-        <fieldset>
-            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Add New Category</h1>
-            </div>
-            <div class="col-2 alert alert-info text-center">category name:</div>
-
-            {{form_category.category_name (class="col-2 form-control form-control-lg", size=6 )}}
-            <div class="forms errors">
-                {{form_category.errors}}
-            </div>
-        </fieldset>
-        <div class="form-group">
-            {{form_category.submit_new_category(class=" col-2 btn btn-outline-info", value="button1")}}
+<div class="row">
+    <div class="col-2"></div>
+</div>
+<form method="POST" action="">
+    <fieldset>
+        <div class="col-3 alert-danger font-weight-bold text-center" role="alert"><h1>Add New Category</h1>
         </div>
-    </form>
-    <div>. </div>
-    <div>. </div>
+        <div class="col-2 alert-info text-center">category name:</div>
 
-    <div>. </div>
-
-    <form method="POST" action="">
-        <fieldset>
-            <div class="col-3 alert alert-danger font-weight-bold text-center" role="alert"><h1>Add New Activity</h1>
-            </div>
-
-            <div class="col-2 alert alert-info text-center">activity name:</div>
-            {{form_activity.activity_name (class="col-2 form-control form-control-lg", size=6 )}}
-            <div>-</div>
-            <div class="col-2 alert alert-info text-center">which category?  </div>
-            {{form_activity.category_id (class="col-2 form-control form-control-lg", size=6 )}}
-
-
-            {{form_activity.box}}
-            <div class="forms errors">
-                {{form_activity.errors}}
-            </div>
-        </fieldset>
-        <div class="form-group">
-            {{form_activity.submit_new_activity(class="col-2 btn btn-outline-info", value="button2")}}
+        {{form_category.category_name (class="col-2 form-control form-control-lg", size=6 )}}
+        <div class="forms errors">
+            {{form_category.errors}}
         </div>
-    </form>
-    <div>
-        {%if added%}
-        {{meal_name}} zostal dodany do menu! :)
-        {%elif in_menu %}
-        {{meal_name}} już jest w menu!! :)
-        {% endif %}
+    </fieldset>
+    <div class="form-group">
+        {{form_category.submit_new_category(class=" col-2 btn btn-outline-info", value="button1")}}
     </div>
+</form>
+<div>. </div>
+<div>. </div>
+
+<div>. </div>
+
+<form method="POST" action="">
+    <fieldset>
+        <div class="col-3 alert-danger font-weight-bold text-center" role="alert"><h1>Add New Activity</h1>
+        </div>
+
+        <div class="col-2 alert-info text-center">activity name:</div>
+        {{form_activity.activity_name (class="col-2 form-control form-control-lg", size=6 )}}
+        <div>-</div>
+        <div class="col-2 alert-info text-center">which category?  </div>
+        {{form_activity.category_id (class="col-2 form-control form-control-lg", size=6 )}}
+
+
+        {{form_activity.box}}
+        <div class="forms errors">
+            {{form_activity.errors}}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{form_activity.submit_new_activity(class="col-2 btn btn-outline-info", value="button2")}}
+    </div>
+</form>
+<div>
+    {%if added%}
+    {{meal_name}} zostal dodany do menu! :)
+    {%elif in_menu %}
+    {{meal_name}} już jest w menu!! :)
+    {% endif %}
 </div>
 
 {% endblock content %}
