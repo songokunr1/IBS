@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.4/chartist.min.js" integrity="sha512-9rxMbTkN9JcgG5euudGbdIbhFZ7KGyAuVomdQDI9qXfPply9BJh0iqA7E/moLCatH2JD4xBGHwV6ezBkCpnjRQ==" crossorigin="anonymous"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://d3js.org/d3.v6.js"></script>
-
+<div class=" col-6 alert-info text-center
 <div class="chart" id="bargraph">
     <script>
         var graphs = {{plot | safe}};
@@ -59,4 +59,5 @@ var myChart = new Chart(ctx, {
 
 });
     </script>
+    </div>
 {% endblock content %}
