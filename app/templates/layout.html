@@ -25,104 +25,111 @@
 
 </head>
 <body>
-
-
-<a role="button" class="btn btn-info btn-lg" id="menu-toggle">Hide Menu</a>
+<a role="button" class="btn btn-info btn-lg sidebar-container-menu" id="menu-toggle">Hide Menu</a>
 <br>
-<div id="wrapper" class="toggled">
-
-    <div class="sidebar-container">
-
-        <div class="sidebar-logo">
-            IBS tracker
-        </div>
-        <!--        <div id="sidebar-wrapper">-->
-        <ul class="sidebar-navigation">
-            <li class="header">Navigation</li>
-            <li>
-                <a href="{{url_for('report')}}">
-                    <i class="fa fa-home" aria-hidden="true"></i> Homepage
-                </a>
-            </li>
-            <li>
-                <a href="{{url_for('charts')}}">
-                    <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
-                </a>
-            </li>
-            <li class="header">Main functionality</li>
-            <li>
-                <a href="{{url_for('add')}}">
-                    <i class="fa fa-users" aria-hidden="true"></i> Add record
-                </a>
-            </li>
-            <li>
-                <a href="{{url_for('create_meal')}}">
-                    <i class="fa fa-cog" aria-hidden="true"></i> Compose a meal
-                </a>
-            </li>
-            <li>
-                <a href="{{url_for('delete')}}">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i> Remove a record
-                </a>
-            </li>
-            <li>
-                <a href="{{url_for('update')}}">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i> Update
-                </a>
-            </li>
-        </ul>
+<br>
+<br>
+<div class="container" id="first">
+    <div id="place_for_menu">
     </div>
-    <!--    </div>-->
-</div>
+    <div id="wrapper" class="toggled">
 
-<div class="content-container">
-    <div class="row">
-        {% if image_file %}
-        <div class="col-6 text-right">
-            <h2 class="text-info font-italic font-weight-bold"> It is so nice to see you here {{current_user.username}}! </h2>
-        </div>
-        <div class="col-6 text-right">
+        <div class="sidebar-container">
 
-            <div class="media">
-                <img class="rounded-circle account-img" src="{{ image_file }}" alt="Smiley face" height="42" width="42">
+            <div class="sidebar-logo">
+                IBS tracker
             </div>
-            {% endif %}
+            <!--        <div id="sidebar-wrapper">-->
+            <ul class="sidebar-navigation">
+                <li class="header">Navigation</li>
+                <li>
+                    <a href="{{url_for('report')}}">
+                        <i class="fa fa-home" aria-hidden="true"></i> Homepage
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('charts')}}">
+                        <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+                    </a>
+                </li>
+                <li class="header">Main functionality</li>
+                <li>
+                    <a href="{{url_for('add')}}">
+                        <i class="fa fa-users" aria-hidden="true"></i> Add record
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('create_meal')}}">
+                        <i class="fa fa-cog" aria-hidden="true"></i> Compose a meal
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('delete')}}">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Remove a record
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('update')}}">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Update
+                    </a>
+                </li>
+            </ul>
         </div>
+        <!--    </div>-->
     </div>
-    <div class="container-fluid">
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-        </div>
-        {% endfor %}
+
+    <div class="content-container">
         <div class="row">
-            <div class="col-3">
+            {% if image_file %}
+            <div class="col-6 text-right">
+                <h2 class="text-info font-italic font-weight-bold"> It is so nice to see you here
+                    {{current_user.username}}! </h2>
             </div>
             <div class="col-6 text-right">
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('report')}}">report</a>-->
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('update')}}">update</a>-->
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('add')}}">add</a>-->
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('delete')}}">delete</a>-->
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('create_meal')}}">create meal</a>-->
-                <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('charts')}}">charts</a>-->
-                {% if current_user.is_authenticated %}
-                <a role="button" class="btn btn-danger btn-lg" href="{{ url_for('account') }}">Account</a>
-                <a role="button" class="btn btn-danger btn-lg" href="{{ url_for('logout') }}">Logout</a>
-                {% else %}
-                <a role="button" class="btn btn-primary btn-lg" href="{{ url_for('login') }}">Login</a>
-                <a role="button" class="btn btn-warning btn-lg" href="{{ url_for('register') }}">Register</a>
+
+                <div class="media">
+                    <img class="rounded-circle account-img" src="{{ image_file }}" alt="Smiley face" height="42"
+                         width="42">
+                </div>
                 {% endif %}
             </div>
         </div>
-    </div>
-    <div class="row"></div>
-    <div class="col-md-10">
-        <br>
+        <div class="container-fluid">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+            <div class="row">
+                <div class="col-3">
+                </div>
+                <div class="col-6 text-right">
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('report')}}">report</a>-->
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('update')}}">update</a>-->
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('add')}}">add</a>-->
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('delete')}}">delete</a>-->
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('create_meal')}}">create meal</a>-->
+                    <!--                <a role="button" class="btn btn-info btn-lg" href="{{url_for('charts')}}">charts</a>-->
+                    {% if current_user.is_authenticated %}
+                    <a role="button" class="btn btn-danger btn-lg" href="{{ url_for('account') }}">Account</a>
+                    <a role="button" class="btn btn-danger btn-lg" href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a role="button" class="btn btn-primary btn-lg" href="{{ url_for('login') }}">Login</a>
+                    <a role="button" class="btn btn-warning btn-lg" href="{{ url_for('register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="col-md-3 col-3"></div>
+
         <br>
         {% block content %}{% endblock %}
     </div>
 </div>
+</div>
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -142,11 +149,6 @@
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
 <script type=text/javascript src="{{
   url_for('static', filename='js/navbar.js') }}"></script>
-
-
-{% block scripts %}
-
-{% endblock %}
 
 
 </body>
