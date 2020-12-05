@@ -390,7 +390,6 @@ def init_activity():
 
 @app.route("/", methods=['POST', 'GET'])
 def report():
-    db.create_all()
     today = str(date.today())
     new_report_form = ChooseDateNewReport()
     try:
@@ -562,18 +561,17 @@ def add():
                                form_activity=form_activity, form_category=form_category)
     if form_activity.validate_on_submit() and form_activity.submit_new_activity.data:
         try:
-            return render_template('add.html',
-                                   form_activity=form_activity, form_category=form_category, added_activity=True)
-        except:
             a_activity = Activity(name=form_activity.activity_name.data, category_id=form_activity.category_id.data,
                                   username_id=current_user.id)
             # if form_activity.box.data:
             #     a_activity.category_id = form_activity.activity_category_id.data
             Activity.save_to_db(a_activity)
             flash(f'well done, we added {form_activity.activity_name.data}')
-
-        return render_template('add.html',
-                               form_activity=form_activity, form_category=form_category, added_activity=True)
+            return render_template('add.html',
+                                   form_activity=form_activity, form_category=form_category, added_activity=True)
+        except:
+            return render_template('add.html',
+                                   form_activity=form_activity, form_category=form_category, added_activity=True)
     return render_template('add.html',
                            form_activity=form_activity, form_category=form_category)
 
@@ -865,11 +863,11 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
-    db.create_all()
-    new = 'atomowka.png'
-    user = User.query.filter_by(id=2).first()
-    user.image_file = new
-    db.session.commit()
+    # db.create_all()
+    # new = 'atomowka.png'
+    # user = User.query.filter_by(id=2).first()
+    # user.image_file = new
+    # db.session.commit()
     image_file = url_for('static', filename='icon/' + current_user.image_file)
 
     return render_template('account.html', image_file=image_file)
