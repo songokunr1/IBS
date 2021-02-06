@@ -276,6 +276,9 @@ height: 2.0rem;
                         {% if single.last_meal%}
                             <option value={{single.id}}>last meal:  {{single.activity_name}}</option>
                         {% endif %}
+                        {% else %}
+                            <option value={{single.id}}>other:  {{single.activity_name}}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
                   <button type="submit" class="btn btn-primary mb-2">Confirm Prediction</button>
