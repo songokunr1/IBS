@@ -71,12 +71,8 @@ class UpdateActivity(FlaskForm):
         super().__init__(*args, **kwargs)
         self.all_cat = Category.json_all()
         self.activity_category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
-        self.all_act = Activity.json_all()
-        self.activity_activity_id.choices = [(single['id'], single['name']) for single in self.all_act]
-
 
     activity_category_id = SelectField('Type', coerce=int)
-    activity_activity_id = SelectField('Type', coerce=int)
     box = BooleanField('Do you want to change category?', default=False)
     activity_name = TextAreaField('new activity name')
 
@@ -89,7 +85,6 @@ class AddActivity(FlaskForm):
         super().__init__(*args, **kwargs)
         self.all_cat = Category.json_all()
         self.category_id.choices = [(single['id'], single['name']) for single in self.all_cat]
-
     category_id = SelectField('Type', coerce=int)
     activity_name = TextAreaField('new_activity')
     submit_new_activity = SubmitField()
