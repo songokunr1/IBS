@@ -642,7 +642,8 @@ def report_new_date2(chosen_date):
 
 
     all_date_records_for_chosen_date = DateNew.json_full_info_by_date(chosen_date)
-
+    data_for_prediction = DateNew.json_info_for_prediction(chosen_date)
+    print(type(chosen_date), chosen_date, 'chosen_date')
 
     if request.method == 'POST':
         checkboxes_breakfast = request.form.getlist('checkbox_breakfast')
@@ -650,6 +651,7 @@ def report_new_date2(chosen_date):
         checkboxes_last_meal = request.form.getlist('checkbox_last_meal')
         prediction_choice_id = request.form.get('prediction_choice')
         if prediction_choice_id:
+
             data_object = DateNew.find_by_id(prediction_choice_id)
             print(data_object.id,' im hereeeeeeeeeeeeeeeee')
             data_object.prediction = True
@@ -719,7 +721,8 @@ def report_new_date2(chosen_date):
                                activity_symptoms=activity_symptoms,
                                activity_meals=activity_meals, today=today, error=error,
                                date_info=date_info,
-                               all_date_records_for_chosen_date=all_date_records_for_chosen_date
+                               all_date_records_for_chosen_date=all_date_records_for_chosen_date,
+                               data_for_prediction= data_for_prediction
                                )
     return render_template('report_full_json.html', form=form_filter,
                            chosen_date=chosen_date, chosen_date_objects=chosen_date_objects,
@@ -727,7 +730,8 @@ def report_new_date2(chosen_date):
                            activity_symptoms=activity_symptoms,
                            activity_meals=activity_meals, today=today,
                            date_info=date_info,
-                           all_date_records_for_chosen_date=all_date_records_for_chosen_date
+                           all_date_records_for_chosen_date=all_date_records_for_chosen_date,
+                           data_for_prediction= data_for_prediction
                            )
 
 @app.route("/CV", methods=['POST', 'GET'])
