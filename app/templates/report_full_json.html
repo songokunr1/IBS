@@ -10,6 +10,8 @@ height: 2.0rem;
 
 
 
+
+
 </style>
 
 
@@ -264,24 +266,39 @@ height: 2.0rem;
             <input type="submit" class="btn btn-primary my-1">
             <br><br><br>
             <form method="POST" action="">
-                <select class="form-control" id="prediction_choice_form", name="prediction_choice">
+                <select class="form-control" id="prediction_choice_form" , name="prediction_choice">
                     <option label=" "></option>
-                    {% for single in all_date_records_for_chosen_date %}
-                        {% if single.breakfast%}
-                             <option value={{single.id}}>breakfast: {{single.activity_name}}</option>
-                        {% endif %}
-                        {% if single.lunch%}
-                            <option value={{single.id}}>lunch:      {{single.activity_name}}</option>
-                        {% endif %}
-                        {% if single.last_meal%}
-                            <option value={{single.id}}>last meal:  {{single.activity_name}}</option>
-                        {% endif %}
-                        {% else %}
-                            <option value={{single.id}}>other:  {{single.activity_name}}</option>
-                        {% endif %}
+                    {% for today in data_for_prediction[0] %}
+                    {% if today.breakfast%}
+                    <option value={{today.id}}>today breakfast: {{today.activity_name}}</option>
+                    {% endif %}
+                    {% if today.lunch%}
+                    <option value={{today.id}}>today lunch: {{today.activity_name}}</option>
+                    {% endif %}
+                    {% if today.last_meal%}
+                    <option value={{today.id}}>today last meal: {{today.activity_name}}</option>
+                    {% endif %}
+                    {% if not today.breakfast and not today.lunch and not today.last_meal%}
+                    <option value={{today.id}}>today other: {{today.activity_name}}</option>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% for previous in data_for_prediction[1] %}
+                    {% if previous.breakfast%}
+                    <option value={{previous.id}}>day before breakfast: {{previous.activity_name}}</option>
+                    {% endif %}
+                    {% if previous.lunch%}
+                    <option value={{previous.id}}>day before lunch: {{previous.activity_name}}</option>
+                    {% endif %}
+                    {% if previous.last_meal%}
+                    <option value={{previous.id}}>day before last meal: {{previous.activity_name}}</option>
+                    {% endif %}
+                    {% if not previous.breakfast and not previous.lunch and not previous.last_meal%}
+                    <option value={{previous.id}}>day before other: {{previous.activity_name}}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
-                  <button type="submit" class="btn btn-primary mb-2">Confirm Prediction</button>
+                <button type="submit" class="btn btn-primary mb-2">Confirm Prediction</button>
             </form>
         </form>
 
@@ -427,6 +444,8 @@ var app = new Vue({
 
 
 
+
+
 </script>
 
 <script>
@@ -455,6 +474,8 @@ var app = new Vue({
 
 
 
+
+
 </script>
 <script>
 const vm = new Vue({ // Again, vm is our Vue instance's name for consistency.
@@ -464,6 +485,8 @@ const vm = new Vue({ // Again, vm is our Vue instance's name for consistency.
         greeting: 'Hello, Vue!'
     }
 })
+
+
 
 
 
