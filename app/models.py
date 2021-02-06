@@ -5,6 +5,7 @@ from sqlalchemy.orm import backref
 from app import db, login_manager
 from flask_login import UserMixin, current_user
 from sqlalchemy.dialects.postgresql.json import JSONB
+from app.helpers import get_date_info
 import json
 from psycopg2.extensions import register_adapter
 import pandas as pd
@@ -15,8 +16,6 @@ def load_user(user_id):
         return User.query.get(user_id)
     except:
         return None
-
-
 
 class Category(db.Model):
     __tablename__ = 'category'
@@ -384,6 +383,13 @@ class DateNew(db.Model):
                  }
                 for date_object in cls.find_activitys_by_date(today)]
 
+    @classmethod
+    def json_info_for_prediction(cls, today):
+        date_info = get_date_info(today)
+        print(date_info['today_str'], date_info['previous'])
+        a = cls.json_full_info_by_date(today)
+        b = cls.json_full_info_by_date(date_info['previous'])
+        return (a, b)
     @classmethod
     def json_dict_list_of_done_activies_by_date(cls, today):
         list_of_done = {
