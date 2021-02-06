@@ -9,6 +9,7 @@ def get_date_info(date_string):
         'previous': str(datetime + timedelta(days=-1))[:10],
         'next': str(datetime + timedelta(days=1))[:10],
         'today': datetime,
+        'today_str': str(datetime),
         'week_name': datetime.strftime("%A"),
         'info': str(datetime.strftime("%A")) + ' ' + str(datetime)[:10]
     }
